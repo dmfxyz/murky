@@ -1,0 +1,72 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.10;
+
+import "ds-test/test.sol";
+import "../Merkle.sol";
+import "forge-std/Vm.sol";
+
+contract ContractTest is DSTest {
+
+    Merkle m;
+    Vm vm = Vm(HEVM_ADDRESS);
+    function setUp() public {
+        m = new Merkle();
+    }
+
+    function testHashLeafs(bytes32 left, bytes32 right) public {
+        bytes32 xor = left ^ right;
+        bytes32 expected = keccak256(abi.encode(xor));
+        assertEq(expected, m.hashLeafPairs(left, right));
+    }
+
+    function testHashLevel(bytes32[] memory level) public {
+        vm.assume(level.length > 0);
+        bytes32[] memory result = m.hashLevel(level);
+    }
+
+    function testGetRoot(bytes32[] memory data) public {
+        vm.assume(data.length > 0);
+        m.getRoot(data);
+    }
+
+    function testGetProof() public {
+        bytes32[] memory data = new bytes32[](9);
+        data[0] = bytes32("0x01337001");
+        data[1] = bytes32("0xBEEF00aa");
+        data[2] = bytes32("0xBEEF00bb");
+        data[3] = bytes32("0xDEAD00aa");
+        data[4] = bytes32("0xDEAD00bb");
+        data[5] = bytes32("0xADDf00aa");
+        data[6] = bytes32("0xADDf00bb");
+        data[7] = bytes32("0xFACE00aa");
+        data[8] = bytes32("0xFACE00bb");
+        bytes32[] memory result = m.getProof(data, 5);
+        for (uint i = 0; i < result.length; ++i) {
+            emit log_bytes32(result[i]);
+        }
+
+    }
+
+    function testVerifyProof() public {
+        bytes32[] memory data = new bytes32[](9);
+        data[0] = bytes32("0x01337001");
+        data[1] = bytes32("0xBEEF00aa");
+        data[2] = bytes32("0xBEEF00bb");
+        data[3] = bytes32("0xDEAD00aa");
+        data[4] = bytes32("0xDEAD00bb");
+        data[5] = bytes32("0xADDf00aa");
+        data[6] = bytes32("0xADDf00bb");
+        data[7] = bytes32("0xFACE00aa");
+        data[8] = bytes32("0xFACE00bb");
+        bytes32[] memory proof = m.getProof(data, 5);
+        bytes32 temp = data[5];
+
+        for(uint i = 0; i < proof.length; ++i){
+            temp = m.hashLeafPairs(temp, proof[i]);
+        }
+        emit log_bytes32(temp);
+        bytes32 root = m.getRoot(data);
+        emit log_bytes32(root);
+        assertEq(temp, root);
+    }
+}
