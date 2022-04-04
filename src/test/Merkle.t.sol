@@ -47,36 +47,22 @@ contract ContractTest is DSTest {
 
     }
 
-     function testVerifyProofManual() public {
-        bytes32[] memory data = new bytes32[](10);
-        data[0] = bytes32("0x00000000");
-        data[1] = bytes32("0xBEEF00aa");
-        data[2] = bytes32("0xBEEF00bb");
-        data[3] = bytes32("0xDEAD00aa");
-        data[4] = bytes32("0xDEAD00bb");
-        data[5] = bytes32("0xADDf00aa");
-        data[6] = bytes32("0xADDf00bb");
-        data[7] = bytes32("0xFACE00aa");
-        data[8] = bytes32("0x00000000");
-        data[9] = bytes32("0x00000d00");
-        bytes32[] memory proof = m.getProof(data, 4);
-        //emit log_string("-----------");
-
-        for (uint i =0; i < proof.length; ++i) {
-            emit log_bytes32(proof[i]);
-        }
-        bytes32 temp = data[4];
-
-        for(uint i = 0; i < proof.length; ++i){
-            temp = m.hashLeafPairs(temp, proof[i]);
-        }
-        //emit log_bytes32(temp);
+    function testVerifyProof(bytes32[] memory data, uint256 node) public {
+        vm.assume(node < data.length);
+        bytes32[] memory proof = m.getProof(data, node);
+        bytes32 valueToProve = data[node];
         bytes32 root = m.getRoot(data);
-        //emit log_bytes32(root);
-        assertEq(temp, root);
+
+        bytes32 rollingHash = valueToProve;
+        for(uint i = 0; i < proof.length; ++i){
+            rollingHash = m.hashLeafPairs(rollingHash, proof[i]);
+        }
+        assertEq(rollingHash, root);
+
     }
 
-    // function testVerifyProofFuzz(bytes32[] data, uint256 node) public {
+    // Left over for manual verification when needed
+    //  function testVerifyProofManual() public {
     //     bytes32[] memory data = new bytes32[](7);
     //     data[0] = bytes32("0x00000000");
     //     data[1] = bytes32("0xBEEF00aa");
@@ -86,14 +72,22 @@ contract ContractTest is DSTest {
     //     data[5] = bytes32("0xADDf00aa");
     //     data[6] = bytes32("0xADDf00bb");
     //     //data[7] = bytes32("0xFACE00aa");
-    //     //data[8] = bytes32("0x00000000");
-    //     bytes32[] memory proof = m.getProof(data, 1);
+    //     // data[8] = bytes32("0x00000000");
+    //     // data[9] = bytes32("0x00000d00");
+    //     // data[10] = bytes32("0x00000000");
+    //     // data[11] = bytes32("0x00000d00");
+    //     // data[12] = bytes32("0x00000000");
+    //     // data[13] = bytes32("0x00000d00");
+    //     // data[14] = bytes32("0x00000000");
+    //     // data[15] = bytes32("0x00000d00");
+    //     //data[16] = bytes32("0x00000000");
+    //     bytes32[] memory proof = m.getProof(data, 3);
     //     //emit log_string("-----------");
-
-    //     for (uint i =0; i < proof.length; ++i) {
-    //         //emit log_bytes32(proof[i]);
-    //     }
-    //     bytes32 temp = data[1];
+ 
+    //     // for (uint i =0; i < proof.length; ++i) {
+    //     //     emit log_bytes32(proof[i]);
+    //     // }
+    //     bytes32 temp = data[3];
 
     //     for(uint i = 0; i < proof.length; ++i){
     //         temp = m.hashLeafPairs(temp, proof[i]);
@@ -101,61 +95,6 @@ contract ContractTest is DSTest {
     //     //emit log_bytes32(temp);
     //     bytes32 root = m.getRoot(data);
     //     //emit log_bytes32(root);
-    //     assertEq(temp, root);
-    // }
-
-
-    
-
-    // function testVerifyProofLessThan10leaves(bytes32[] memory data, uint256 node) public {
-    //     vm.assume(data.length < 10 && data.length > 0);
-    //     vm.assume(node < data.length);
-    //     vm.assume(node > 1);
-    //     // bytes32[] memory data = new bytes32[](13);
-    //     // data[0] = bytes32("0x01337001");
-    //     // data[1] = bytes32("0xBEEF00aa");
-    //     // data[2] = bytes32("0xBEEF00bb");
-    //     // data[3] = bytes32("0xDEAD00aa");
-    //     // data[4] = bytes32("0xDEAD00bb");
-    //     // data[5] = bytes32("0xADDf00aa");
-    //     //data[6] = bytes32("0xADDf00bb");
-    //     // data[7] = bytes32("0xFACE00aa");
-    //     // data[8] = bytes32("0xFACE00bb");
-    //     // data[9] = bytes32("0x133700aa");
-    //     // data[10] = bytes32("0x133700bb");
-    //     bytes32[] memory proof = m.getProof(data, node);
-    //     bytes32 temp = data[node];
-
-    //     for(uint i = 0; i < proof.length; ++i){
-    //         temp = m.hashLeafPairs(temp, proof[i]);
-    //     }
-    //     emit log_bytes32(temp);
-    //     bytes32 root = m.getRoot(data);
-    //     emit log_bytes32(root);
-    //     assertEq(temp, root);
-    // }
-
-    // function testVerifyProofEvenLeafCount() public {
-    //     bytes32[] memory data = new bytes32[](10);
-    //     data[0] = bytes32("0x01337001");
-    //     data[1] = bytes32("0xBEEF00aa");
-    //     data[2] = bytes32("0xBEEF00bb");
-    //     data[3] = bytes32("0xDEAD00aa");
-    //     data[4] = bytes32("0xDEAD00bb");
-    //     data[5] = bytes32("0xADDf00aa");
-    //     data[6] = bytes32("0xADDf00bb");
-    //     data[7] = bytes32("0xFACE00aa");
-    //     data[8] = bytes32("0xFACE00bb");
-    //     data[9] = bytes32("0x133700aa");
-    //     bytes32[] memory proof = m.getProof(data, 6);
-    //     bytes32 temp = data[6];
-
-    //     for(uint i = 0; i < proof.length; ++i){
-    //         temp = m.hashLeafPairs(temp, proof[i]);
-    //     }
-    //     emit log_bytes32(temp);
-    //     bytes32 root = m.getRoot(data);
-    //     emit log_bytes32(root);
     //     assertEq(temp, root);
     // }
 }

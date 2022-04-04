@@ -45,36 +45,33 @@ contract Merkle is DSTest {
 
     function getProof(bytes32[] memory data, uint256 layer) public returns (bytes32[] memory) {
 
-        // TODO: need efficient way to calcualte the size of the proof tree. I think
-        // it may be floor(log2(data.length)) + 1? depends on parity. To look into
-        // uint256 size = data.length;
-        // uint256 log2 = 0;
-        // while(size > 0) {
-        //     size = size >> 1;
-        //     log2 += 1;
-        // }
-        //bool oddCount = data.length % 2 == 1;
-        bytes32[] memory result = new bytes32[](data.length / 2 );
-        // if (oddCount) {
-        //     result = new bytes32[](data.length / 2);
-        // } else {
-        //     result = new bytes32[](data.length / 2 - 1);
-        // }
-
+        // The size of the proof is equal to the ceiling of log2(numLeaves) 
+        // Calculate this ceiling by repeatedly shifting the length uint until there are no set bits left
+        uint256 ls = data.length;
+        uint256 proofsize = 0;
+        while(ls > 0){
+            ls >>= 1;
+            ++proofsize;
+        }
+        
+        // handles case where numLeaves is eq to 2^n, n E Z-+, in this case the above overshoots by 1.
+        uint256 lsb = (~data.length + 1) & data.length;
+        if (lsb == data.length) {
+            --proofsize;
+        }
+        
+        bytes32[] memory result = new bytes32[](proofsize);
         bytes32[] memory curData = data;
         uint256 currentLayer = layer;
         uint256 pos = 0;
         while(curData.length > 1) {
 
             if(layer % 2 == 1) {
-                //emit log_bytes32(curData[layer - 1]);
                 result[pos] = curData[layer - 1];
             } else {
                 if (layer + 1 == curData.length){
                     result[pos] = bytes32(0);  
                 } else {
-                    // emit log_uint(layer);
-                    // emit log_uint(curData.length);
                     result[pos] = curData[layer + 1];
                 }
             }
