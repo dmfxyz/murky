@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.10;
+import "ds-test/test.sol";
 
 bytes32 constant empty_leaf = 0;
-contract Merkle {
+contract Merkle is DSTest {
 
     constructor() {}
 
@@ -43,20 +44,37 @@ contract Merkle {
     }
 
     function getProof(bytes32[] memory data, uint256 layer) public returns (bytes32[] memory) {
-        bytes32[] memory result = new bytes32[](data.length / 2);
+
+        // TODO: need efficient way to calcualte the size of the proof tree. I think
+        // it may be floor(log2(data.length)) + 1? depends on parity. To look into
+        // uint256 size = data.length;
+        // uint256 log2 = 0;
+        // while(size > 0) {
+        //     size = size >> 1;
+        //     log2 += 1;
+        // }
+        //bool oddCount = data.length % 2 == 1;
+        bytes32[] memory result = new bytes32[](data.length / 2 );
+        // if (oddCount) {
+        //     result = new bytes32[](data.length / 2);
+        // } else {
+        //     result = new bytes32[](data.length / 2 - 1);
+        // }
+
         bytes32[] memory curData = data;
         uint256 currentLayer = layer;
         uint256 pos = 0;
         while(curData.length > 1) {
-            // if (curData.length % 2 == 1) {
-            //     curData[curData.length] = bytes32(0);
-            // }
+
             if(layer % 2 == 1) {
+                //emit log_bytes32(curData[layer - 1]);
                 result[pos] = curData[layer - 1];
             } else {
                 if (layer + 1 == curData.length){
-                    result[pos] = bytes32(0);
+                    result[pos] = bytes32(0);  
                 } else {
+                    // emit log_uint(layer);
+                    // emit log_uint(curData.length);
                     result[pos] = curData[layer + 1];
                 }
             }
