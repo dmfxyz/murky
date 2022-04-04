@@ -48,6 +48,7 @@ contract ContractTest is DSTest {
     }
 
     function testVerifyProof(bytes32[] memory data, uint256 node) public {
+        vm.assume(data.length > 0);
         vm.assume(node < data.length);
         bytes32[] memory proof = m.getProof(data, node);
         bytes32 valueToProve = data[node];
@@ -60,7 +61,6 @@ contract ContractTest is DSTest {
         assertEq(rollingHash, root);
 
     }
-
     // Left over for manual verification when needed
     //  function testVerifyProofManual() public {
     //     bytes32[] memory data = new bytes32[](7);

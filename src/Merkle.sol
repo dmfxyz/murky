@@ -45,6 +45,8 @@ contract Merkle is DSTest {
 
     function getProof(bytes32[] memory data, uint256 layer) public returns (bytes32[] memory) {
 
+        // NOTE::  This could definitely over/underflow. Got to investigate edge cases. 
+        // NOTE:: Also, this: https://graphics.stanford.edu/~seander/bithacks.html#IntegerLogDeBruijn
         // The size of the proof is equal to the ceiling of log2(numLeaves) 
         // Calculate this ceiling by repeatedly shifting the length uint until there are no set bits left
         uint256 ls = data.length;
@@ -53,13 +55,14 @@ contract Merkle is DSTest {
             ls >>= 1;
             ++proofsize;
         }
-        
+
         // handles case where numLeaves is eq to 2^n, n E Z-+, in this case the above overshoots by 1.
         uint256 lsb = (~data.length + 1) & data.length;
         if (lsb == data.length) {
             --proofsize;
         }
         
+        //uint256 proofsize = log2ceil(data.length);
         bytes32[] memory result = new bytes32[](proofsize);
         bytes32[] memory curData = data;
         uint256 currentLayer = layer;
@@ -82,5 +85,4 @@ contract Merkle is DSTest {
 
         return result;
     }
-
 }
