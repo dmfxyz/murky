@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.10;
-import "ds-test/test.sol";
 
 bytes32 constant empty_leaf = 0;
-contract Merkle is DSTest {
+contract Merkle {
 
     constructor() {}
 
@@ -35,54 +34,104 @@ contract Merkle is DSTest {
     }
 
     function getRoot(bytes32[] memory data) public pure returns (bytes32) {
-        bytes32[] memory result = data;
 
-        while(result.length > 1) {
-            result = hashLevel(result);
+        while(data.length > 1) {
+            data = hashLevel(data);
         }
-        return result[0];
+        return data[0];
     }
 
-    function getProof(bytes32[] memory data, uint256 layer) public returns (bytes32[] memory) {
-
-        // NOTE::  This could definitely over/underflow. Got to investigate edge cases. 
-        // NOTE:: Also, this: https://graphics.stanford.edu/~seander/bithacks.html#IntegerLogDeBruijn
+    function getProof(bytes32[] memory data, uint256 node) public pure returns (bytes32[] memory) {
         // The size of the proof is equal to the ceiling of log2(numLeaves) 
-        // Calculate this ceiling by repeatedly shifting the length uint until there are no set bits left
-        uint256 ls = data.length;
-        uint256 proofsize = 0;
-        while(ls > 0){
-            ls >>= 1;
-            ++proofsize;
-        }
+        uint256 proofsize = log2ceil_naive(data.length);
 
-        // handles case where numLeaves is eq to 2^n, n E Z-+, in this case the above overshoots by 1.
-        uint256 lsb = (~data.length + 1) & data.length;
-        if (lsb == data.length) {
-            --proofsize;
-        }
-        
-        //uint256 proofsize = log2ceil(data.length);
         bytes32[] memory result = new bytes32[](proofsize);
-        bytes32[] memory curData = data;
-        uint256 currentLayer = layer;
         uint256 pos = 0;
-        while(curData.length > 1) {
+        while(data.length > 1) {
 
-            if(layer % 2 == 1) {
-                result[pos] = curData[layer - 1];
-            } else {
-                if (layer + 1 == curData.length){
-                    result[pos] = bytes32(0);  
-                } else {
-                    result[pos] = curData[layer + 1];
-                }
+            if(node % 2 == 1) {
+                result[pos] = data[node - 1];
+            } 
+            else if (node + 1 == data.length) {
+                result[pos] = bytes32(0);  
+            } 
+            else {
+                result[pos] = data[node + 1];
             }
             ++pos;
-            layer = layer / 2;
-            curData = hashLevel(curData);
+            node = node / 2;
+            data = hashLevel(data);
         }
 
         return result;
+    }
+
+    function verifyProof(bytes32 root, bytes32[] memory proof, bytes32 valueToProve) public pure returns (bool) {
+        for(uint i = 0; i < proof.length; ++i){
+            valueToProve = hashLeafPairs(valueToProve, proof[i]);
+        }
+        return root == valueToProve;
+    }
+
+    // assumes x > 0;
+    function log2ceil_naive(uint256 x) public pure returns (uint256) {
+        uint256 ceil = 0;
+        uint256 lsb = (~x + 1) & x;
+        bool powerOf2 = x == lsb;
+        while( x > 0) {
+            x >>= 1;
+            ceil++;
+        }
+       
+        if (powerOf2) {
+            ceil--;
+        }
+        return ceil;
+    }
+
+    // Original bitmagic adapted from https://github.com/paulrberg/prb-math/blob/main/contracts/PRBMath.sol
+    // assumes x > 1;
+    function log2ceil_bitmagic(uint256 x) public pure returns (uint256){
+        uint256 msb;
+        uint256 _x = x;
+        if (x >= 2**128) {
+            x >>= 128;
+            msb += 128;
+        }
+        if (x >= 2**64) {
+            x >>= 64;
+            msb += 64;
+        }
+        if (x >= 2**32) {
+            x >>= 32;
+            msb += 32;
+        }
+        if (x >= 2**16) {
+            x >>= 16;
+            msb += 16;
+        }
+        if (x >= 2**8) {
+            x >>= 8;
+            msb += 8;
+        }
+        if (x >= 2**4) {
+            x >>= 4;
+            msb += 4;
+        }
+        if (x >= 2**2) {
+            x >>= 2;
+            msb += 2;
+        }
+        if (x >= 2**1) {
+            msb += 1;
+        }
+
+        
+        uint256 lsb = (~_x + 1) & _x;
+        if ((lsb == _x) && (msb > 0)) {
+            return msb;
+        } else {
+            return msb + 1;
+        }
     }
 }
