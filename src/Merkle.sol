@@ -1,10 +1,21 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
-bytes32 constant empty_leaf = 0;
+/// @notice Nascent, ugly, gas inefficient (but improving!) Merkle proof generator and verifier
+/// @author dmfxyz
+/// @dev Note that all each piece of data must be no more than 32 bytes.
 contract Merkle {
-
+    /***************
+    * CONSTRUCTOR *
+    ***************/
     constructor() {}
+
+    /********************
+    * HASING FUNCTIONS *
+    ********************/
+    function hashLeafPairs(bytes32 left, bytes32 right) public pure returns (bytes32) {
+        return keccak256(abi.encode(left ^ right));
+    }
 
     function hashLevel(bytes32[] memory data) public pure returns (bytes32[] memory) {
         require(data.length > 0, "cannot hash empty level");
@@ -18,23 +29,21 @@ contract Merkle {
             result = new bytes32[](data.length / 2);
         }
 
-        uint256 pos = 0;
-        for (uint256 i = 0; i < data.length-1; i+=2){
-            result[pos] = hashLeafPairs(data[i], data[i+1]);
-            ++pos;
+        // pos is upper bounded by data.length / 2
+        unchecked {
+            uint256 pos = 0;
+            for (uint256 i = 0; i < data.length-1; i+=2){
+                result[pos] = hashLeafPairs(data[i], data[i+1]);
+                ++pos;
+            }
         }
-
         return result;
-
-
     }
 
-    function hashLeafPairs(bytes32 left, bytes32 right) public pure returns (bytes32) {
-        return keccak256(abi.encode(left ^ right));
-    }
-
+    /********************
+    * PROOF GENERATION *
+    ********************/
     function getRoot(bytes32[] memory data) public pure returns (bytes32) {
-
         while(data.length > 1) {
             data = hashLevel(data);
         }
@@ -44,11 +53,10 @@ contract Merkle {
     function getProof(bytes32[] memory data, uint256 node) public pure returns (bytes32[] memory) {
         // The size of the proof is equal to the ceiling of log2(numLeaves) 
         uint256 proofsize = log2ceil_naive(data.length);
-
         bytes32[] memory result = new bytes32[](proofsize);
         uint256 pos = 0;
-        while(data.length > 1) {
 
+        while(data.length > 1) {
             if(node % 2 == 1) {
                 result[pos] = data[node - 1];
             } 
@@ -62,10 +70,12 @@ contract Merkle {
             node = node / 2;
             data = hashLevel(data);
         }
-
         return result;
     }
 
+    /**********************
+    * PROOF VERIFICATION *
+    **********************/
     function verifyProof(bytes32 root, bytes32[] memory proof, bytes32 valueToProve) public pure returns (bool) {
         for(uint i = 0; i < proof.length; ++i){
             valueToProve = hashLeafPairs(valueToProve, proof[i]);
@@ -73,7 +83,11 @@ contract Merkle {
         return root == valueToProve;
     }
 
-    // assumes x > 0;
+    /******************
+    * MATH "LIBRARY" *
+    ******************/
+    
+    /// @dev  Note that x is assumed > 0
     function log2ceil_naive(uint256 x) public pure returns (uint256) {
         uint256 ceil = 0;
         uint256 lsb = (~x + 1) & x;
@@ -82,15 +96,14 @@ contract Merkle {
             x >>= 1;
             ceil++;
         }
-       
         if (powerOf2) {
             ceil--;
         }
         return ceil;
     }
 
-    // Original bitmagic adapted from https://github.com/paulrberg/prb-math/blob/main/contracts/PRBMath.sol
-    // assumes x > 1;
+    /// Original bitmagic adapted from https://github.com/paulrberg/prb-math/blob/main/contracts/PRBMath.sol
+    /// @dev Note that x assumed > 1
     function log2ceil_bitmagic(uint256 x) public pure returns (uint256){
         uint256 msb;
         uint256 _x = x;
@@ -126,7 +139,6 @@ contract Merkle {
             msb += 1;
         }
 
-        
         uint256 lsb = (~_x + 1) & _x;
         if ((lsb == _x) && (msb > 0)) {
             return msb;

@@ -15,7 +15,7 @@ contract ContractTest is DSTest {
 
     
     function testGenerateProof(bytes32[] memory data, uint256 node) public {
-        vm.assume(data.length > 0);
+        vm.assume(data.length > 1);
         vm.assume(node < data.length);
         bytes32 root = m.getRoot(data);
         bytes32[] memory proof = m.getProof(data, node);
@@ -42,12 +42,7 @@ contract ContractTest is DSTest {
         vm.assume(node < data.length);
         bytes32 root = m.getRoot(data);
         bytes32[] memory proof = m.getProof(data, node);
-
-        bytes32 rollingHash = valueToProve;
-        for(uint i = 0; i < proof.length; ++i){
-            rollingHash = m.hashLeafPairs(rollingHash, proof[i]);
-        }
-        assertEq(rollingHash, root);
+        assertTrue(m.verifyProof(root, proof, valueToProve));
     } 
     
 
