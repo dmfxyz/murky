@@ -15,7 +15,7 @@ contract Merkle {
     ********************/
 
     function hashLeafPairs(bytes32 left, bytes32 right) public pure returns (bytes32 _hash) {
-        // saves about 40 gas lol
+        // saves a few gas lol
         assembly {
             mstore(0x0, xor(left,right))
            _hash := keccak256(0x0, 0x20)
@@ -26,10 +26,9 @@ contract Merkle {
 
     function hashLevel(bytes32[] memory data) public pure returns (bytes32[] memory) {
         require(data.length > 0, "cannot hash empty level");
-        bool oddCount = data.length % 2 == 1;
         bytes32[] memory result;
 
-        if (oddCount){
+        if (data.length % 2 == 1){
             result = new bytes32[](data.length / 2 + 1);
             result[result.length - 1] = hashLeafPairs(data[data.length - 1], bytes32(0));
         } else {
