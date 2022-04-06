@@ -13,9 +13,14 @@ contract ContractTest is DSTest {
         m = new Merkle();
     }
 
+    function testHashes(bytes32 left, bytes32 right) public {
+        bytes32 hAssem = m.hashLeafPairs(left, right);
+        bytes32 hNaive = keccak256(abi.encode(left ^ right));
+        assertEq(hAssem, hNaive);
+    }
     
     function testGenerateProof(bytes32[] memory data, uint256 node) public {
-        vm.assume(data.length > 1);
+        vm.assume(data.length > 0);
         vm.assume(node < data.length);
         bytes32 root = m.getRoot(data);
         bytes32[] memory proof = m.getProof(data, node);
@@ -43,7 +48,7 @@ contract ContractTest is DSTest {
         bytes32 root = m.getRoot(data);
         bytes32[] memory proof = m.getProof(data, node);
         assertTrue(m.verifyProof(root, proof, valueToProve));
-    } 
+    }
     
 
     function testLogCeil_naive(uint256 x) public{
