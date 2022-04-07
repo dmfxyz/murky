@@ -1,0 +1,15 @@
+Compiling 1 files with 0.8.10
+Compiler run successful
+
+Running 10 tests for src/test/Merkle.t.sol:ContractTest
+[32m[PASS][0m testFailVerifyProof(bytes32[],bytes32,uint256) (runs: 5000, μ: 166727, ~: 162759)
+[32m[PASS][0m testGenerateProof(bytes32[],uint256) (runs: 5000, μ: 168568, ~: 173501)
+[32m[PASS][0m testHashes(bytes32,bytes32) (runs: 5000, μ: 6006, ~: 6006)
+[32m[PASS][0m testLogCeil_Known() (gas: 6239)
+[32m[PASS][0m testLogCeil_KnownPowerOf2() (gas: 6056)
+[32m[PASS][0m testLogCeil_bitmagic(uint256) (runs: 5000, μ: 11407, ~: 11508)
+[32m[PASS][0m testLogCeil_naive(uint256) (runs: 5000, μ: 21907, ~: 25916)
+[32m[PASS][0m testVerifyProof(bytes32[],uint256) (runs: 5000, μ: 164032, ~: 168170)
+[32m[PASS][0m testWontGetProofSingleLeaf() (gas: 11997)
+[32m[PASS][0m testWontGetRootSingleLeaf() (gas: 11485)
+Test result: [32mok[0m. 10 passed; 0 failed; finished in 14.45s

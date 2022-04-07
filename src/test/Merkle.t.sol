@@ -61,7 +61,7 @@ contract ContractTest is DSTest {
         bytes32[] memory data = new bytes32[](1);
         data[0] = bytes32(0x0);
         vm.expectRevert("won't generate proof for single leaf");
-        m.getRoot(data);
+        m.getProof(data, 0x0);
     }
     
 

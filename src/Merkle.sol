@@ -46,7 +46,7 @@ contract Merkle {
         // Two overflow risks: node, pos
         // node: max array size is 2**256-1. Largest index in the array will be 1 less than that. Also,
            // for dynamic arrays, size is limited to 2**64-1
-        // pos: pos is bounded by log2(data.length), which will always be less than type(uint256).max 
+        // pos: pos is bounded by log2(data.length), which should be less than type(uint256).max 
         while(data.length > 1) {
             unchecked {
                 if(node % 2 == 1) {
