@@ -10,6 +10,62 @@ contract Merkle {
     ***************/
     constructor() {}
 
+
+    /**********************
+    * PROOF VERIFICATION *
+    **********************/
+    
+    function verifyProof(bytes32 root, bytes32[] memory proof, bytes32 valueToProve) public pure returns (bool) {
+        // proof length must be less than max array size
+        unchecked {
+            for(uint i = 0; i < proof.length; ++i){
+                valueToProve = hashLeafPairs(valueToProve, proof[i]);
+            }
+        }
+        return root == valueToProve;
+    }
+
+    /********************
+    * PROOF GENERATION *
+    ********************/
+
+    function getRoot(bytes32[] memory data) public pure returns (bytes32) {
+        require(data.length > 1, "won't generate root for single leaf");
+        while(data.length > 1) {
+            data = hashLevel(data);
+        }
+        return data[0];
+    }
+
+    function getProof(bytes32[] memory data, uint256 node) public pure returns (bytes32[] memory) {
+        require(data.length > 1, "won't generate proof for single leaf");
+        // The size of the proof is equal to the ceiling of log2(numLeaves) 
+        bytes32[] memory result = new bytes32[](log2ceil_naive(data.length));
+        uint256 pos = 0;
+
+        // Two overflow risks: node, pos
+        // node: max array size is 2**256-1. Largest index in the array will be 1 less than that. Also,
+           // for dynamic arrays, size is limited to 2**64-1
+        // pos: pos is bounded by log2(data.length), which will always be less than type(uint256).max 
+        while(data.length > 1) {
+            unchecked {
+                if(node % 2 == 1) {
+                    result[pos] = data[node - 1];
+                } 
+                else if (node + 1 == data.length) {
+                    result[pos] = bytes32(0);  
+                } 
+                else {
+                    result[pos] = data[node + 1];
+                }
+                ++pos;
+                node = node / 2;
+            }
+            data = hashLevel(data);
+        }
+        return result;
+    }
+
     /********************
     * HASING FUNCTIONS *
     ********************/
@@ -24,8 +80,7 @@ contract Merkle {
     }
 
 
-    function hashLevel(bytes32[] memory data) public pure returns (bytes32[] memory) {
-        require(data.length > 0, "cannot hash empty level");
+    function hashLevel(bytes32[] memory data) internal pure returns (bytes32[] memory) {
         bytes32[] memory result;
 
         if (data.length % 2 == 1){
@@ -44,57 +99,6 @@ contract Merkle {
             }
         }
         return result;
-    }
-
-    /********************
-    * PROOF GENERATION *
-    ********************/
-
-    function getRoot(bytes32[] memory data) public pure returns (bytes32) {
-        while(data.length > 1) {
-            data = hashLevel(data);
-        }
-        return data[0];
-    }
-
-    function getProof(bytes32[] memory data, uint256 node) public pure returns (bytes32[] memory) {
-        // The size of the proof is equal to the ceiling of log2(numLeaves) 
-        uint256 proofsize = log2ceil_naive(data.length);
-        bytes32[] memory result = new bytes32[](proofsize);
-        uint256 pos = 0;
-
-        while(data.length > 1) {
-            if(node % 2 == 1) {
-                result[pos] = data[node - 1];
-            } 
-            else if (node + 1 == data.length) {
-                result[pos] = bytes32(0);  
-            } 
-            else {
-                result[pos] = data[node + 1];
-            }
-            unchecked {
-                ++pos;
-                node = node / 2;
-            }
-            
-            data = hashLevel(data);
-        }
-        return result;
-    }
-
-    /**********************
-    * PROOF VERIFICATION *
-    **********************/
-
-    function verifyProof(bytes32 root, bytes32[] memory proof, bytes32 valueToProve) public pure returns (bool) {
-        // proof length must be less than max array size
-        unchecked {
-            for(uint i = 0; i < proof.length; ++i){
-                valueToProve = hashLeafPairs(valueToProve, proof[i]);
-            }
-        }
-        return root == valueToProve;
     }
 
     /******************

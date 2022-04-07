@@ -20,7 +20,7 @@ contract ContractTest is DSTest {
     }
     
     function testGenerateProof(bytes32[] memory data, uint256 node) public {
-        vm.assume(data.length > 0);
+        vm.assume(data.length > 1);
         vm.assume(node < data.length);
         bytes32 root = m.getRoot(data);
         bytes32[] memory proof = m.getProof(data, node);
@@ -34,7 +34,7 @@ contract ContractTest is DSTest {
     }
 
     function testVerifyProof(bytes32[] memory data, uint256 node) public {
-        vm.assume(data.length > 0);
+        vm.assume(data.length > 1);
         vm.assume(node < data.length);
         bytes32 root = m.getRoot(data);
         bytes32[] memory proof = m.getProof(data, node);
@@ -43,11 +43,25 @@ contract ContractTest is DSTest {
     }
 
     function testFailVerifyProof(bytes32[] memory data, bytes32 valueToProve, uint256 node) public {
-        vm.assume(data.length > 0);
+        vm.assume(data.length > 1);
         vm.assume(node < data.length);
         bytes32 root = m.getRoot(data);
         bytes32[] memory proof = m.getProof(data, node);
         assertTrue(m.verifyProof(root, proof, valueToProve));
+    }
+
+    function testWontGetRootSingleLeaf() public {
+        bytes32[] memory data = new bytes32[](1);
+        data[0] = bytes32(0x0);
+        vm.expectRevert("won't generate root for single leaf");
+        m.getRoot(data);
+    }
+
+    function testWontGetProofSingleLeaf() public {
+        bytes32[] memory data = new bytes32[](1);
+        data[0] = bytes32(0x0);
+        vm.expectRevert("won't generate proof for single leaf");
+        m.getRoot(data);
     }
     
 
