@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity 0.8.13;
 
 /// @notice Nascent, ugly, gas inefficient (but improving!) Merkle proof generator and verifier
 /// @author dmfxyz
