@@ -83,6 +83,7 @@ contract Merkle {
     function hashLevel(bytes32[] memory data) internal pure returns (bytes32[] memory) {
         bytes32[] memory result;
 
+        // TODO: can store data.length to avoid mload calls
         if (data.length % 2 == 1){
             result = new bytes32[](data.length / 2 + 1);
             result[result.length - 1] = hashLeafPairs(data[data.length - 1], bytes32(0));
