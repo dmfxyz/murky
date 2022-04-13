@@ -73,6 +73,8 @@ contract GenericMerkle {
     function hashLeafPairs(bytes32 left, bytes32 right) public pure returns (bytes32 _hash) {
         // saves a few gas lol
        assembly {
+           // TODO: This can be aesthetically simplified with a switch. Not sure it will
+           // save much gas but there are other optimizations to be had in here.
            if or(lt(left, right), eq(left,right)) {
                mstore(0x0, left)
                mstore(0x20, right)

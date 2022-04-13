@@ -1,6 +1,6 @@
 ## Merkle Generator and Prover in Solidity
 
-This repo contains a solidity contract `Merkle` that can generate and verify merkle proofs for items of type `bytes32`.
+This repo contains a solidity contracts that can generate and verify merkle proofs for items of type `bytes32`. Both a XOR based hashing and a concatenation based hashing are currently supported.
 
 ### Building Locally
 You can run the repo using [Foundry](https://github.com/gakonst/foundry).
