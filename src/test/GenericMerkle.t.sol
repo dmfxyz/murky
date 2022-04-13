@@ -3,20 +3,28 @@ pragma solidity 0.8.13;
 
 import "ds-test/test.sol";
 import "../Merkle.sol";
+import "../GenericMerkle.sol";
 import "forge-std/Vm.sol";
+import "openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol";
 
 contract ContractTest is DSTest {
 
     
-    Merkle m;
+    GenericMerkle m;
     Vm vm = Vm(HEVM_ADDRESS);
     function setUp() public {
-        m = new Merkle();
+        m = new GenericMerkle();
     }
 
     function testHashes(bytes32 left, bytes32 right) public {
         bytes32 hAssem = m.hashLeafPairs(left, right);
-        bytes32 hNaive = keccak256(abi.encode(left ^ right));
+        bytes memory packed;
+        if (left <= right) {
+            packed = abi.encodePacked(left, right);
+        } else {
+            packed = abi.encodePacked(right, left);
+        }
+        bytes32 hNaive = keccak256(packed);
         assertEq(hAssem, hNaive);
     }
     
@@ -50,6 +58,26 @@ contract ContractTest is DSTest {
         bytes32 root = m.getRoot(data);
         bytes32[] memory proof = m.getProof(data, node);
         assertTrue(m.verifyProof(root, proof, valueToProve));
+    }
+
+    function testCompatabilityOpenZeppelinProver(bytes32[] memory data, uint256 node) public {
+        vm.assume(data.length > 1);
+        vm.assume(node < data.length);
+        bytes32 root = m.getRoot(data);
+        bytes32[] memory proof = m.getProof(data, node);
+        bytes32 valueToProve = data[node];
+        bool murkyVerified = m.verifyProof(root, proof, valueToProve);
+        bool ozVerified = MerkleProof.verify(proof, root, valueToProve);
+        assertTrue(murkyVerified == ozVerified);
+    }
+
+    function testVerifyProofOzForGasComparison(bytes32[] memory data, uint256 node) public {
+        vm.assume(data.length > 1);
+        vm.assume(node < data.length);
+        bytes32 root = m.getRoot(data);
+        bytes32[] memory proof = m.getProof(data, node);
+        bytes32 valueToProve = data[node];
+        assertTrue(MerkleProof.verify(proof, root, valueToProve));
     }
 
     function testWontGetRootSingleLeaf() public {

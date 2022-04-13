@@ -1,15 +1,30 @@
-Compiling 1 files with 0.8.10
+Compiling 7 files with 0.8.13
 Compiler run successful
 
 Running 10 tests for src/test/Merkle.t.sol:ContractTest
-[32m[PASS][0m testFailVerifyProof(bytes32[],bytes32,uint256) (runs: 5000, μ: 166727, ~: 162759)
-[32m[PASS][0m testGenerateProof(bytes32[],uint256) (runs: 5000, μ: 168568, ~: 173501)
-[32m[PASS][0m testHashes(bytes32,bytes32) (runs: 5000, μ: 6006, ~: 6006)
-[32m[PASS][0m testLogCeil_Known() (gas: 6239)
+[32m[PASS][0m testFailVerifyProof(bytes32[],bytes32,uint256) (runs: 5000, μ: 189630, ~: 186398)
+[32m[PASS][0m testGenerateProof(bytes32[],uint256) (runs: 5000, μ: 164930, ~: 161319)
+[32m[PASS][0m testHashes(bytes32,bytes32) (runs: 5000, μ: 5984, ~: 5984)
+[32m[PASS][0m testLogCeil_Known() (gas: 6217)
 [32m[PASS][0m testLogCeil_KnownPowerOf2() (gas: 6056)
-[32m[PASS][0m testLogCeil_bitmagic(uint256) (runs: 5000, μ: 11407, ~: 11508)
-[32m[PASS][0m testLogCeil_naive(uint256) (runs: 5000, μ: 21907, ~: 25916)
-[32m[PASS][0m testVerifyProof(bytes32[],uint256) (runs: 5000, μ: 164032, ~: 168170)
-[32m[PASS][0m testWontGetProofSingleLeaf() (gas: 11997)
-[32m[PASS][0m testWontGetRootSingleLeaf() (gas: 11485)
-Test result: [32mok[0m. 10 passed; 0 failed; finished in 14.45s
+[32m[PASS][0m testLogCeil_bitmagic(uint256) (runs: 5000, μ: 11426, ~: 11583)
+[32m[PASS][0m testLogCeil_naive(uint256) (runs: 5000, μ: 22069, ~: 26038)
+[32m[PASS][0m testVerifyProof(bytes32[],uint256) (runs: 5000, μ: 160467, ~: 156868)
+[32m[PASS][0m testWontGetProofSingleLeaf() (gas: 11975)
+[32m[PASS][0m testWontGetRootSingleLeaf() (gas: 11463)
+Test result: [32mok[0m. 10 passed; 0 failed; finished in 16.97s
+
+Running 12 tests for src/test/GenericMerkle.t.sol:ContractTest
+[32m[PASS][0m testCompatabilityOpenZeppelinProver(bytes32[],uint256) (runs: 5000, μ: 188526, ~: 184200)
+[32m[PASS][0m testFailVerifyProof(bytes32[],bytes32,uint256) (runs: 5000, μ: 214534, ~: 211328)
+[32m[PASS][0m testGenerateProof(bytes32[],uint256) (runs: 5000, μ: 190789, ~: 186448)
+[32m[PASS][0m testHashes(bytes32,bytes32) (runs: 5000, μ: 6099, ~: 6104)
+[32m[PASS][0m testLogCeil_Known() (gas: 6195)
+[32m[PASS][0m testLogCeil_KnownPowerOf2() (gas: 6056)
+[32m[PASS][0m testLogCeil_bitmagic(uint256) (runs: 5000, μ: 11419, ~: 11508)
+[32m[PASS][0m testLogCeil_naive(uint256) (runs: 5000, μ: 22046, ~: 25877)
+[32m[PASS][0m testVerifyProof(bytes32[],uint256) (runs: 5000, μ: 188383, ~: 216237)
+[32m[PASS][0m testVerifyProofOzForGasComparison(bytes32[],uint256) (runs: 5000, μ: 183891, ~: 179574)
+[32m[PASS][0m testWontGetProofSingleLeaf() (gas: 12042)
+[32m[PASS][0m testWontGetRootSingleLeaf() (gas: 11441)
+Test result: [32mok[0m. 12 passed; 0 failed; finished in 16.97s
