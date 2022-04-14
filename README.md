@@ -55,4 +55,5 @@ OUTDATED::: A version of the contract is currently deployed on rinkeby: [0x6c510
 ```sh
 forge snapshot --match-path src/test/StandardInput.t.sol
 ```
+> NOTE: It is not sufficent to just run the StandardInput tests when making modifications to implementation. Always make sure that all tests pass before using the StandardInput test for gas snapshots. 
 

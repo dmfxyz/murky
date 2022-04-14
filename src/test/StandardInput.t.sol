@@ -25,7 +25,7 @@ contract StandardizedInputTest is DSTest {
         m = new Merkle();
     }
     
-    function testXorkleGenerateProofStandard() public {
+    function testXorkleGenerateProofStandard() public view {
         bytes32[] memory _data = _getData(); 
         for (uint i = 0; i < leafs.length; ++i) {
             x.getProof(_data, leafs[i]);
@@ -33,7 +33,7 @@ contract StandardizedInputTest is DSTest {
 
     }
 
-    function testMerkleGenerateProofStandard() public {
+    function testMerkleGenerateProofStandard() public view {
         bytes32[] memory _data = _getData();
         for(uint i = 0; i < leafs.length; ++i) {
             m.getProof(_data, leafs[i]);
