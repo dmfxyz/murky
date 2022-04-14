@@ -5,14 +5,13 @@ import "../Xorkle.sol";
 import "../Merkle.sol";
 import "openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol";
 
-contract InputTest is DSTest {
+contract StandardizedInputTest is DSTest {
 
     Vm vm = Vm(HEVM_ADDRESS);
 
     // Contracts (to be migrated to libraries)
     Xorkle x;
     Merkle m;
-    bytes32[] proof;
     bytes32[100] data;
     uint256[8] leafs = [4, 8, 15, 16, 23, 42, 69, 88];
 
@@ -59,20 +58,7 @@ contract InputTest is DSTest {
         }
     }
 
-    function testReadme() public {
-        Merkle m = new Merkle();
-        bytes32[] memory data = new bytes32[](4);
-        data[0] = bytes32("0x0");
-        data[1] = bytes32("0x1");
-        data[2] = bytes32("0x2");
-        data[3] = bytes32("0x3");
-        bytes32 root = m.getRoot(data);
-        bytes32[] memory proof = m.getProof(data, 2); // will get proof for 0x2 value
-        bool verified = m.verifyProof(root, proof, data[2]); // true!
-        assertTrue(verified);
-    }
-
-    function _getData() public returns (bytes32[] memory) {
+    function _getData() public view returns (bytes32[] memory) {
         bytes32[] memory _data = new bytes32[](data.length);
         uint length = data.length;
         for (uint i = 0; i < length; ++i) {

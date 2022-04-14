@@ -50,3 +50,9 @@ OUTDATED::: A version of the contract is currently deployed on rinkeby: [0x6c510
 
 #### Latest Gas
 ![gas report](./reports/murky_gas_report.png)
+
+[Gas Snapshots](./.gas-snapshot) are run only on the standardized tests:
+```sh
+forge snapshot --match-path src/test/StandardInput.t.sol
+```
+
