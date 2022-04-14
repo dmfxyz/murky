@@ -1,14 +1,16 @@
-// SPDX-License-Identifier: MIT
+// LICENSE IDENTIFIER: MIT
 pragma solidity 0.8.13;
 
-/// @notice Nascent, ugly, gas inefficient (but improving!) Merkle proof generator and verifier
-/// @author dmfxyz
-/// @dev Note that all each piece of data must be no more than 32 bytes.
-contract GenericMerkle {
+abstract contract MurkyBase {
     /***************
     * CONSTRUCTOR *
     ***************/
     constructor() {}
+
+    /********************
+    * HASING FUNCTIONS *
+    ********************/
+    function hashLeafPairs(bytes32 left, bytes32 right) public pure virtual returns (bytes32 _hash);
 
 
     /**********************
@@ -17,12 +19,13 @@ contract GenericMerkle {
     
     function verifyProof(bytes32 root, bytes32[] memory proof, bytes32 valueToProve) public pure returns (bool) {
         // proof length must be less than max array size
+        bytes32 rollingHash = valueToProve;
         unchecked {
             for(uint i = 0; i < proof.length; ++i){
-                valueToProve = hashLeafPairs(valueToProve, proof[i]);
+                rollingHash = hashLeafPairs(rollingHash, proof[i]);
             }
         }
-        return root == valueToProve;
+        return root == rollingHash;
     }
 
     /********************
@@ -65,29 +68,6 @@ contract GenericMerkle {
         }
         return result;
     }
-
-    /********************
-    * HASING FUNCTIONS *
-    ********************/
-
-    function hashLeafPairs(bytes32 left, bytes32 right) public pure returns (bytes32 _hash) {
-        // saves a few gas lol
-       assembly {
-           // TODO: This can be aesthetically simplified with a switch. Not sure it will
-           // save much gas but there are other optimizations to be had in here.
-           if or(lt(left, right), eq(left,right)) {
-               mstore(0x0, left)
-               mstore(0x20, right)
-           }
-           if gt(left, right) {
-               mstore(0x0, right)
-               mstore(0x20, left)
-           }
-           _hash := keccak256(0x0, 0x40)
-       }
-        //return keccak256(abi.encode(left ^ right));
-    }
-
 
     function hashLevel(bytes32[] memory data) internal pure returns (bytes32[] memory) {
         bytes32[] memory result;
