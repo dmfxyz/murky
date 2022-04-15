@@ -1,16 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.13;
 
-import "ds-test/test.sol";
 import "../Merkle.sol";
-import "forge-std/Vm.sol";
+import "forge-std/Test.sol";
 import "openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol";
 
-contract ContractTest is DSTest {
+contract ContractTest is Test {
 
     
     Merkle m;
-    Vm vm = Vm(HEVM_ADDRESS);
     function setUp() public {
         m = new Merkle();
     }

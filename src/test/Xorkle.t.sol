@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.13;
 
-import "ds-test/test.sol";
 import "../Xorkle.sol";
-import "forge-std/Vm.sol";
+import "forge-std/Test.sol";
 
 contract ContractTest is DSTest {
 
-    
+        
     Xorkle m;
     Vm vm = Vm(HEVM_ADDRESS);
     function setUp() public {

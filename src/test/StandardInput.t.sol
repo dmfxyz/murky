@@ -1,8 +1,8 @@
 pragma solidity 0.8.13;
-import "ds-test/test.sol";
-import "forge-std/Vm.sol";
+
 import "../Xorkle.sol";
 import "../Merkle.sol";
+import "forge-std/Test.sol";
 import "openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol";
 
 contract StandardizedInputTest is DSTest {
