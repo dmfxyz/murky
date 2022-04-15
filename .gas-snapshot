@@ -1,4 +1,4 @@
-StandardizedInputTest:testMerkleGenerateProofStandard() (gas: 768014)
-StandardizedInputTest:testMerkleVerifyProofStandard() (gas: 865050)
-StandardizedInputTest:testXorkleGenerateProofStandard() (gas: 708635)
-StandardizedInputTest:testXorkleVerifyProofStandard() (gas: 794182)
+StandardizedInputTest:testMerkleGenerateProofStandard() (gas: 762582)
+StandardizedInputTest:testMerkleVerifyProofStandard() (gas: 858691)
+StandardizedInputTest:testXorkleGenerateProofStandard() (gas: 705651)
+StandardizedInputTest:testXorkleVerifyProofStandard() (gas: 790745)

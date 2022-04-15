@@ -15,8 +15,8 @@ contract Merkle is MurkyBase {
     /// ascending sort and concat prior to hashing
     function hashLeafPairs(bytes32 left, bytes32 right) public pure override returns (bytes32 _hash) {
        assembly {
-           switch gt(left, right)
-           case 1 {
+           switch lt(left, right)
+           case 0 {
                mstore(0x0, right)
                mstore(0x20, left)
            }

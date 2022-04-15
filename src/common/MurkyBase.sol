@@ -20,8 +20,9 @@ abstract contract MurkyBase {
     function verifyProof(bytes32 root, bytes32[] memory proof, bytes32 valueToProve) public pure returns (bool) {
         // proof length must be less than max array size
         bytes32 rollingHash = valueToProve;
+        uint256 length = proof.length;
         unchecked {
-            for(uint i = 0; i < proof.length; ++i){
+            for(uint i = 0; i < length; ++i){
                 rollingHash = hashLeafPairs(rollingHash, proof[i]);
             }
         }
@@ -72,18 +73,18 @@ abstract contract MurkyBase {
     function hashLevel(bytes32[] memory data) internal pure returns (bytes32[] memory) {
         bytes32[] memory result;
 
-        // TODO: can store data.length to avoid mload calls
-        if (data.length % 2 == 1){
-            result = new bytes32[](data.length / 2 + 1);
-            result[result.length - 1] = hashLeafPairs(data[data.length - 1], bytes32(0));
+        uint256 length = data.length;
+        if (length % 2 == 1){
+            result = new bytes32[](length / 2 + 1);
+            result[result.length - 1] = hashLeafPairs(data[length - 1], bytes32(0));
         } else {
-            result = new bytes32[](data.length / 2);
+            result = new bytes32[](length / 2);
         }
 
         // pos is upper bounded by data.length / 2, so safe even if array is at max size
         unchecked {
             uint256 pos = 0;
-            for (uint256 i = 0; i < data.length-1; i+=2){
+            for (uint256 i = 0; i < length-1; i+=2){
                 result[pos] = hashLeafPairs(data[i], data[i+1]);
                 ++pos;
             }
