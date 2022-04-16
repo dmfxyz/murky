@@ -3,11 +3,8 @@ pragma solidity 0.8.13;
 import "../Xorkle.sol";
 import "../Merkle.sol";
 import "forge-std/Test.sol";
-import "openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol";
 
-contract StandardizedInputTest is DSTest {
-
-    Vm vm = Vm(HEVM_ADDRESS);
+contract StandardizedInputTest is Test {
 
     // Contracts (to be migrated to libraries)
     Xorkle x;
@@ -18,7 +15,7 @@ contract StandardizedInputTest is DSTest {
     function setUp() public {
         string[] memory inputs = new string[](2);
         inputs[0] = "cat";
-        inputs[1] = "src/test/StandardInput.txt";
+        inputs[1] = "src/test/standard_data/StandardInput.txt";
         bytes memory result =  vm.ffi(inputs);
         data = abi.decode(result, (bytes32[100]));
         x = new Xorkle();

@@ -1,8 +1,8 @@
 ## Merkle Generator and Prover in Solidity
 
-This repo contains a solidity contracts that can generate and verify merkle proofs for items of type `bytes32`. Both XOR based hashing and a concatenation based hashing are currently supported.
+This repo contains solidity contracts that can generate and verify merkle proofs for items of type `bytes32`. Both XOR based hashing and a concatenation based hashing are currently supported.
 
-The root, proof generation, and verification functions are all fuzzed tested (configured 5,000 runs by default) using arbitrary bytes32 arrays and target leafs.
+The root generation, proof generation, and verification functions are all fuzzed tested (configured 5,000 runs by default) using arbitrary bytes32 arrays and target leafs. There is also standardized testing.
 
 > Note: Code is not audited (yet). Please do your own due dilligence testing if you are planning to use this code!
 
@@ -34,26 +34,33 @@ assertTrue(verified);
 
 * `Merkle.sol` is implemented using concatenation as thus is a generic merkle tree. It's less efficient, but compatible with [OpenZeppelin's Prover](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/MerkleProof.sol) and other implementations. Use this one if you aren't sure. Compatiblity with OZ Prover is implemented as a fuzzed test.
 
-### Deployment
-OUTDATED::: A version of the contract is currently deployed on rinkeby: [0x6c510d5809a7b77d71a5f1be2d600c95065d7aa4](https://rinkeby.etherscan.io/address/0x6c510d5809a7b77d71a5f1be2d600c95065d7aa4)
+### Testing
+The code is both "fuzz" tested and tested with standardized data. [Standard data info](./src/test/standard_data/).
 
+When making changes for performance improvement, please ensure you are benchmarking using standardized data only*:
 
-#### TODO
-- [x] Create standardized tests using FFI
-- [x] Abstract out base implementation
-- [x] Test results match with openzeppelin verification implementation
-- [ ] \* Do a writeup on the use-cases for XORs.
-- [ ] Update existing FFI test data to be less high MSB biased. Also, in general the standardized testing design needs some work.
-- [ ] Write some FFI tests to verify compatibility with [uniswap merkle deployer](https://github.com/Uniswap/merkle-distributor/tree/master/src)
-- [ ] Migrate to library and adjust testing accordingly
-- [ ] Gas optimization for GenericMerkle (and also some lingering optimizations for merkle)
+```sh
+forge snapshot --match-path src/test/StandardInput.t.sol
+```
+
+Passing just standardized tests is not sufficient for implementation changes. All changes must pass all tests, preferably with 10,000+ fuzz runs.
+
+> * It's possible that an improvement is not adequetly revealed by the current standardized data. If that is the case, new standard data should be provided with an accompanying description/justification.
 
 #### Latest Gas
 ![gas report](./reports/murky_gas_report.png)
 
-[Gas Snapshots](./.gas-snapshot) are run only on the standardized tests:
-```sh
-forge snapshot --match-path src/test/StandardInput.t.sol
-```
-> NOTE: It is not sufficent to just run the StandardInput tests when making modifications to implementation. Always make sure that all tests pass before using the StandardInput test for gas snapshots. 
+[Gas Snapshots](./.gas-snapshot) are run only on the standardized tests. See [Testing](#testing).
+
+---
+#### TODO
+- [x] Create standardized tests using FFI
+- [x] Abstract out base implementation
+- [x] Test results match with openzeppelin verification implementation
+- [x] Update existing FFI test data to be less high MSB biased. Also, in general the standardized testing design needs some work.
+- [x] Gas optimization for GenericMerkle (and also some lingering optimizations for merkle)(Note: done for now, there is higher priority work)
+
+- [ ] \* Do a writeup on the use-cases for XORs.
+- [ ] Write some FFI tests to verify compatibility with [uniswap merkle deployer](https://github.com/Uniswap/merkle-distributor/tree/master/src)
+- [ ] Migrate to library and adjust testing accordingly
 
