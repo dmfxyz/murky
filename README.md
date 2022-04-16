@@ -1,8 +1,8 @@
 ## Merkle Generator and Prover in Solidity
 
-This repo contains solidity contracts that can generate and verify merkle proofs for items of type `bytes32`. Both XOR based hashing and a concatenation based hashing are currently supported.
+Murky contains contracts that can generate merkle roots and proofs. Murky also performs inclusion verification. Both XOR-based and a concatenation-based hashing are currently supported.
 
-The root generation, proof generation, and verification functions are all fuzzed tested (configured 5,000 runs by default) using arbitrary bytes32 arrays and target leafs. There is also standardized testing.
+The root generation, proof generation, and verification functions are all fuzz tested (configured 5,000 runs by default) using arbitrary bytes32 arrays and uint leafs. There is also standardized testing.
 
 > Note: Code is not audited (yet). Please do your own due dilligence testing if you are planning to use this code!
 
@@ -32,12 +32,12 @@ assertTrue(verified);
 ### Notes
 * `Xorkle.sol` is implemented as a XOR tree. This allows for greater gas efficiency: hashes are calculated on 32 bytes instead of 64; it is agnostic of sibling order so there is less lt/gt branching. Note that XOR trees are not appropriate for all use-cases*.
 
-* `Merkle.sol` is implemented using concatenation as thus is a generic merkle tree. It's less efficient, but compatible with [OpenZeppelin's Prover](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/MerkleProof.sol) and other implementations. Use this one if you aren't sure. Compatiblity with OZ Prover is implemented as a fuzzed test.
+* `Merkle.sol` is implemented using concatenation and thus is a generic merkle tree. It's less efficient, but is compatible with [OpenZeppelin's Prover](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/MerkleProof.sol) and other implementations. Use this one if you aren't sure. Compatiblity with OZ Prover is implemented as a fuzz test.
 
 ### Testing
 The code is both "fuzz" tested and tested with standardized data. [Standard data info](./src/test/standard_data/).
 
-When making changes for performance improvement, please ensure you are benchmarking using standardized data only*:
+When measuring a change's performance impact, please ensure you are benchmarking using standardized data only*:
 
 ```sh
 forge snapshot --match-path src/test/StandardInput.t.sol
