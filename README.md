@@ -2,7 +2,7 @@
 
 Murky contains contracts that can generate merkle roots and proofs. Murky also performs inclusion verification. Both XOR-based and a concatenation-based hashing are currently supported.
 
-The root generation, proof generation, and verification functions are all fuzz tested (configured 5,000 runs by default) using arbitrary bytes32 arrays and uint leafs. There is also standardized testing.
+The root generation, proof generation, and verification functions are all fuzz tested (configured 5,000 runs by default) using arbitrary bytes32 arrays and uint leafs. There is also standardized testing and differential testing.
 
 > Note: Code is not audited (yet). Please do your own due dilligence testing if you are planning to use this code!
 
@@ -44,6 +44,8 @@ forge snapshot --match-path src/test/StandardInput.t.sol
 ```
 
 Passing just standardized tests is not sufficient for implementation changes. All changes must pass all tests, preferably with 10,000+ fuzz runs.
+
+There is also early support for [differential testing](./differential_testing/).
 
 > * It's possible that an improvement is not adequetly revealed by the current standardized data. If that is the case, new standard data should be provided with an accompanying description/justification.
 

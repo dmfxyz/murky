@@ -8,15 +8,13 @@ var data = [];
 for (var i = 0; i < 100; ++i) {
     data.push("0x" + crypto.randomBytes(32).toString('hex'));
 }
-
-var dataAsBuffer = [];
-for (var i = 0; i < data.length; ++i) {
-    dataAsBuffer.push(toBuffer(data[i]));
-
-}
+var dataAsBuffer = data.map(b => toBuffer(b));
 
 const tree = new MerkleTree(dataAsBuffer);
 process.stdout.write(ethers.utils.defaultAbiCoder.encode(['bytes32'], [tree.getRoot()]));
 const encodedData = ethers.utils.defaultAbiCoder.encode(["bytes32[100]"], [data]);
+if (!fs.existsSync("../data/")) {
+    fs.mkdirSync("../data/");
+}
 fs.writeFileSync("../data/input", encodedData);
 

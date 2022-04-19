@@ -1,6 +1,6 @@
 cache/
 out/
 *.txt
-cross-testing/**/node_modules
-cross-testing/**/*.js
-cross-testing/data/input
+differential_testing/**/node_modules
+differential_testing/**/*.js
+differential_testing/data/input
