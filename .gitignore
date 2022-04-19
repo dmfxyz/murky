@@ -1,3 +1,6 @@
 cache/
 out/
 *.txt
+cross-testing/**/node_modules
+cross-testing/**/*.js
+cross-testing/data/input
