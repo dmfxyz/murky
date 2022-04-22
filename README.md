@@ -40,7 +40,7 @@ The code is both "fuzz" tested and tested with standardized data. [Standard data
 When measuring a change's performance impact, please ensure you are benchmarking using standardized data only*:
 
 ```sh
-forge snapshot --match-path src/test/StandardInput.t.sol
+forge snapshot --ffi --match-path src/test/StandardInput.t.sol
 ```
 
 Passing just standardized tests is not sufficient for implementation changes. All changes must pass all tests, preferably with 10,000+ fuzz runs.
@@ -61,8 +61,8 @@ There is also early support for [differential testing](./differential_testing/).
 - [x] Test results match with openzeppelin verification implementation
 - [x] Update existing FFI test data to be less high MSB biased. Also, in general the standardized testing design needs some work.
 - [x] Gas optimization for GenericMerkle (and also some lingering optimizations for merkle)(Note: done for now, there is higher priority work)
+- [x] Write some FFI tests to verify compatibility with [uniswap merkle deployer](https://github.com/Uniswap/merkle-distributor/tree/master/src)
 
 - [ ] \* Do a writeup on the use-cases for XORs.
-- [ ] Write some FFI tests to verify compatibility with [uniswap merkle deployer](https://github.com/Uniswap/merkle-distributor/tree/master/src)
 - [ ] Migrate to library and adjust testing accordingly
 
