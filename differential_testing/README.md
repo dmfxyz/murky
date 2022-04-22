@@ -19,7 +19,7 @@ npm run generate-root
 ### Run the differential test using foundry
 From the root of the Murky repo, run:
 ```sh
-forge test -c differential_testing/test/DifferentialTests.t.sol
+forge test -ffi -c differential_testing/test/DifferentialTests.t.sol
 ```
 
 

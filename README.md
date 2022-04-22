@@ -40,7 +40,7 @@ The code is both "fuzz" tested and tested with standardized data. [Standard data
 When measuring a change's performance impact, please ensure you are benchmarking using standardized data only*:
 
 ```sh
-forge snapshot --match-path src/test/StandardInput.t.sol
+forge snapshot --ffi --match-path src/test/StandardInput.t.sol
 ```
 
 Passing just standardized tests is not sufficient for implementation changes. All changes must pass all tests, preferably with 10,000+ fuzz runs.
