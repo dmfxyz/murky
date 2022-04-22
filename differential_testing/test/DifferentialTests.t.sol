@@ -2,6 +2,7 @@ pragma solidity 0.8.13;
 
 import "../../src/Merkle.sol";
 import "forge-std/Test.sol";
+import "openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol";
 
 contract DifferentialTests is Test {
 
@@ -35,6 +36,17 @@ contract DifferentialTests is Test {
         bytes32 murkyGeneratedRoot = m.getRoot(_getData()); // converts storage data array to memory
         //emit log_bytes32(murkyGeneratedRoot);
         assertEq(murkyGeneratedRoot, jsGeneratedRoot);
+    }
+
+    function testCompatabilityOpenZeppelinProver(bytes32[] memory _data, uint256 node) public {
+        vm.assume(_data.length > 1);
+        vm.assume(node < _data.length);
+        bytes32 root = m.getRoot(_data);
+        bytes32[] memory proof = m.getProof(_data, node);
+        bytes32 valueToProve = _data[node];
+        bool murkyVerified = m.verifyProof(root, proof, valueToProve);
+        bool ozVerified = MerkleProof.verify(proof, root, valueToProve);
+        assertTrue(murkyVerified == ozVerified);
     }
 
     function _getData() public view returns (bytes32[] memory) {
