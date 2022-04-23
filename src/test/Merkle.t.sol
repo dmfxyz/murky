@@ -57,17 +57,6 @@ contract ContractTest is Test {
         assertTrue(m.verifyProof(root, proof, valueToProve));
     }
 
-    function testCompatabilityOpenZeppelinProver(bytes32[] memory data, uint256 node) public {
-        vm.assume(data.length > 1);
-        vm.assume(node < data.length);
-        bytes32 root = m.getRoot(data);
-        bytes32[] memory proof = m.getProof(data, node);
-        bytes32 valueToProve = data[node];
-        bool murkyVerified = m.verifyProof(root, proof, valueToProve);
-        bool ozVerified = MerkleProof.verify(proof, root, valueToProve);
-        assertTrue(murkyVerified == ozVerified);
-    }
-
     function testVerifyProofOzForGasComparison(bytes32[] memory data, uint256 node) public {
         vm.assume(data.length > 1);
         vm.assume(node < data.length);

@@ -14,6 +14,7 @@
     "typescript": "^4.6.3"
   },
   "scripts": {
-    "generate-root": "npx tsc --esModuleInterop ./*.ts && node generate_root.js"
+    "generate-root": "npx tsc --esModuleInterop ./*.ts && node generate_root.js",
+    "generate-root-stdin": "npx tsc --esModuleInterop ./*.ts && node generate_root_stdin.js"
   }
 }
