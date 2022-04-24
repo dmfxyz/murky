@@ -8,7 +8,9 @@ Currently, the only reference implementation is adapted from the [Uniswap/merkle
 From the [scripts directory](./scripts/), run
 ```sh
 npm install
+npm run compile
 ```
+
 
 ### Test the javascript implementation
 From the scripts directory:
@@ -17,9 +19,10 @@ npm run generate-root
 ```
 
 ### Run the differential test using foundry
+Now you can run the tests.  
 From the root of the Murky repo, run:
 ```sh
-forge test -ffi -c differential_testing/test/DifferentialTests.t.sol
+forge test --ffi -c differential_testing/test/DifferentialTests.t.sol
 ```
 
 

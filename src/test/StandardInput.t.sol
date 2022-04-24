@@ -10,7 +10,7 @@ contract StandardizedInputTest is Test {
     Xorkle x;
     Merkle m;
     bytes32[100] data;
-    uint256[8] leafs = [4, 8, 15, 16, 23, 42, 69, 88];
+    uint256[8] leaves = [4, 8, 15, 16, 23, 42, 69, 88];
 
     function setUp() public {
         string[] memory inputs = new string[](2);
@@ -24,34 +24,34 @@ contract StandardizedInputTest is Test {
     
     function testXorkleGenerateProofStandard() public view {
         bytes32[] memory _data = _getData(); 
-        for (uint i = 0; i < leafs.length; ++i) {
-            x.getProof(_data, leafs[i]);
+        for (uint i = 0; i < leaves.length; ++i) {
+            x.getProof(_data, leaves[i]);
         }
 
     }
 
     function testMerkleGenerateProofStandard() public view {
         bytes32[] memory _data = _getData();
-        for(uint i = 0; i < leafs.length; ++i) {
-            m.getProof(_data, leafs[i]);
+        for(uint i = 0; i < leaves.length; ++i) {
+            m.getProof(_data, leaves[i]);
         }
     }
 
     function testXorkleVerifyProofStandard() public {
         bytes32[] memory _data = _getData();
         bytes32 root = x.getRoot(_data);
-        for (uint i = 0; i < leafs.length; ++i) {
-            bytes32[] memory proof = x.getProof(_data, leafs[i]);
-            assertTrue(x.verifyProof(root, proof, _data[leafs[i]]));
+        for (uint i = 0; i < leaves.length; ++i) {
+            bytes32[] memory proof = x.getProof(_data, leaves[i]);
+            assertTrue(x.verifyProof(root, proof, _data[leaves[i]]));
         }
     }
 
     function testMerkleVerifyProofStandard() public {
         bytes32[] memory _data = _getData();
         bytes32 root = m.getRoot(_data);
-        for (uint i = 0; i < leafs.length; ++i) {
-            bytes32[] memory proof = m.getProof(_data, leafs[i]);
-            assertTrue(m.verifyProof(root, proof, _data[leafs[i]]));
+        for (uint i = 0; i < leaves.length; ++i) {
+            bytes32[] memory proof = m.getProof(_data, leaves[i]);
+            assertTrue(m.verifyProof(root, proof, _data[leaves[i]]));
         }
     }
 

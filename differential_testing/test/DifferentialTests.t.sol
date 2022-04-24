@@ -5,9 +5,11 @@ import "forge-std/Test.sol";
 import "openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol";
 import "openzeppelin-contracts/contracts/utils/Strings.sol";
 import "forge-std/console.sol";
+import "./utils/Strings2.sol";
 
 contract DifferentialTests is Test {
-
+    using Strings for uint;
+    using Strings2 for bytes;
     // Contracts (to be migrated to libraries)
     Merkle m;
     bytes32[100] data;
@@ -40,38 +42,28 @@ contract DifferentialTests is Test {
         assertEq(murkyGeneratedRoot, jsGeneratedRoot);
     }
 
-    
+    /// @notice For questions on the argument name, see: https://en.wikipedia.org/wiki/Toronto_Maple_leaves
     function testMerkleRootMatchesJSImplementationFuzzed(bytes32[] memory leafs) public {
         vm.assume(leafs.length > 1);
-        // this will be fuzzed, just static for testing
-        
-        // bytes32[] memory leafs = new bytes32[](6); 
-        // leafs[0] = bytes32(uint256(0xdead));
-        // leafs[1] = bytes32(uint256(0xface));
-        // leafs[2] = bytes32(uint256(0xbabe));
-        // leafs[3] = bytes32(uint256(0x1337));
-        // leafs[4] = bytes32(uint256(0x1234));
-        // leafs[5] = bytes32(uint256(0xbeef));
-
         bytes memory packed = abi.encodePacked(leafs);
-        string memory jsArg = bytesToHexString(packed);
-        emit log_string(jsArg);
         string[] memory runJsInputs = new string[](8);
+
+        // build ffi command string
         runJsInputs[0] = 'npm';
         runJsInputs[1] = '--prefix';
         runJsInputs[2] = 'differential_testing/scripts/';
         runJsInputs[3] = '--silent';
         runJsInputs[4] = 'run';
         runJsInputs[5] = 'generate-root-stdin';
-        runJsInputs[6] = Strings.toString(leafs.length);
-        runJsInputs[7] = jsArg;
+        runJsInputs[6] = leafs.length.toString();
+        runJsInputs[7] = packed.toHexString();
+
+        // run and captures output
         bytes memory jsResult = vm.ffi(runJsInputs);
         bytes32 jsGeneratedRoot = abi.decode(jsResult, (bytes32));
-        emit log_bytes32(jsGeneratedRoot);
         
         // Calculate root using Murky
         bytes32 murkyGeneratedRoot = m.getRoot(leafs);
-        emit log_bytes32(murkyGeneratedRoot);
         assertEq(murkyGeneratedRoot, jsGeneratedRoot);
     }
 
@@ -93,21 +85,5 @@ contract DifferentialTests is Test {
             _data[i] = data[i];
         }
         return _data;
-    }
-
-    function bytesToHexString(bytes memory input) public returns (string memory) {
-        bytes16 symbols = "0123456789abcdef";
-        bytes memory hex_buffer = new bytes(2 * input.length + 2);
-        hex_buffer[0] = "0";
-        hex_buffer[1] = "x";
-
-        uint pos = 2;
-        uint256 length = input.length;
-        for (uint i = 0; i < length; ++i) {
-            uint _byte = uint8(input[i]);
-            hex_buffer[pos++] = symbols[_byte >> 4 & 0xf];
-            hex_buffer[pos++] = symbols[_byte & 0xf];
-        }
-        return string(hex_buffer);
     }
 }

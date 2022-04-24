@@ -2,7 +2,7 @@
 
 Murky contains contracts that can generate merkle roots and proofs. Murky also performs inclusion verification. Both XOR-based and a concatenation-based hashing are currently supported.
 
-The root generation, proof generation, and verification functions are all fuzz tested (configured 5,000 runs by default) using arbitrary bytes32 arrays and uint leafs. There is also standardized testing and differential testing.
+The root generation, proof generation, and verification functions are all fuzz tested (configured 5,000 runs by default) using arbitrary bytes32 arrays and uint leaves. There is also standardized testing and differential testing.
 
 > Note: Code is not audited (yet). Please do your own due dilligence testing if you are planning to use this code!
 
