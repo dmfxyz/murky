@@ -54,7 +54,7 @@ contract DifferentialTests is Test {
         runJsInputs[2] = 'differential_testing/scripts/';
         runJsInputs[3] = '--silent';
         runJsInputs[4] = 'run';
-        runJsInputs[5] = 'generate-root-stdin';
+        runJsInputs[5] = 'generate-root-cli';
         runJsInputs[6] = leafs.length.toString();
         runJsInputs[7] = packed.toHexString();
 

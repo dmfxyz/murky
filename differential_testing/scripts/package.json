@@ -16,6 +16,6 @@
   "scripts": {
     "compile": "npx tsc --esModuleInterop ./*.ts",
     "generate-root": "node generate_root.js",
-    "generate-root-stdin": "node generate_root_stdin.js"
+    "generate-root-cli": "node generate_root_cli.js"
   }
 }

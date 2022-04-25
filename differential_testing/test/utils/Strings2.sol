@@ -16,7 +16,7 @@ library Strings2 {
         uint256 length = input.length;
         for (uint i = 0; i < length; ++i) {
             uint _byte = uint8(input[i]);
-            hex_buffer[pos++] = symbols[_byte >> 4 & 0xf];
+            hex_buffer[pos++] = symbols[_byte >> 4];
             hex_buffer[pos++] = symbols[_byte & 0xf];
         }
         return string(hex_buffer);

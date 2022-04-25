@@ -45,7 +45,7 @@ forge snapshot --ffi --match-path src/test/StandardInput.t.sol
 
 Passing just standardized tests is not sufficient for implementation changes. All changes must pass all tests, preferably with 10,000+ fuzz runs.
 
-There is also early support for [differential testing](./differential_testing/).
+There is also early support for [differential  testing](./differential_testing/).
 
 > * It's possible that an improvement is not adequetly revealed by the current standardized data. If that is the case, new standard data should be provided with an accompanying description/justification.
 
