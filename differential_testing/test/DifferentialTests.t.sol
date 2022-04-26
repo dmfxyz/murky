@@ -12,13 +12,15 @@ contract DifferentialTests is Test {
     using Strings2 for bytes;
     // Contracts (to be migrated to libraries)
     Merkle m;
-    bytes32[100] data;
+    bytes32[129] data;
 
     function setUp() public {
         m = new Merkle();
     }
     
-    function testMerkleRootMatchesJSImplementation() public {
+    ///@dev original log2ceil implementation failed on this and other
+    // numbers close to a power of 2. Diff tested here for sanity.
+    function testMerkleRootMatchesJSImplementation129() public {
         // Run the reference implementation in javascript
         string[] memory runJsInputs = new string[](6);
         runJsInputs[0] = 'npm';
@@ -26,7 +28,7 @@ contract DifferentialTests is Test {
         runJsInputs[2] = 'differential_testing/scripts/';
         runJsInputs[3] = '--silent';
         runJsInputs[4] = 'run';
-        runJsInputs[5] = 'generate-root';
+        runJsInputs[5] = 'generate-root'; // Generates length 129 by default
         bytes memory jsResult = vm.ffi(runJsInputs);
         bytes32 jsGeneratedRoot = abi.decode(jsResult, (bytes32));
 
@@ -35,7 +37,7 @@ contract DifferentialTests is Test {
         loadJsDataInputs[0] = "cat";
         loadJsDataInputs[1] = "differential_testing/data/input";
         bytes memory loadResult =  vm.ffi(loadJsDataInputs);
-        data  = abi.decode(loadResult, (bytes32[100]));
+        data  = abi.decode(loadResult, (bytes32[129]));
 
         // Calculate root using Murky
         bytes32 murkyGeneratedRoot = m.getRoot(_getData());

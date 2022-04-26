@@ -79,25 +79,6 @@ contract ContractTest is Test {
         vm.expectRevert("won't generate proof for single leaf");
         m.getProof(data, 0x0);
     }
-    
-
-    function testLogCeil_naive(uint256 x) public{
-        vm.assume(x > 0);
-        m.log2ceil_naive(x);
-    }
-
-    function testLogCeil_bitmagic(uint256 x) public {
-        vm.assume(x > 0);
-        m.log2ceil_bitmagic(x);
-    }
-
-
-    function testLogCeil_KnownPowerOf2() public {
-        assertEq(3, m.log2ceil_bitmagic(8));
-    }
-    function testLogCeil_Known() public {
-        assertEq(8, m.log2ceil_bitmagic(129));
-    }
 
     function valueNotInArray(bytes32[] memory data, bytes32 value) public pure returns (bool) {
         for (uint i = 0; i < data.length; ++i) {

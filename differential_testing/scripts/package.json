@@ -1,5 +1,5 @@
 {
-  "name": "murky-uniswap",
+  "name": "murky-differential",
   "version": "1.0.0",
   "description": "Scripts to perform solidity/js merkle tree testing",
   "main": "generate.js",
@@ -16,6 +16,7 @@
   "scripts": {
     "compile": "npx tsc --esModuleInterop ./*.ts",
     "generate-root": "node generate_root.js",
+    "generate-root-129": "node generate_root.js",
     "generate-root-cli": "node generate_root_cli.js"
   }
 }
