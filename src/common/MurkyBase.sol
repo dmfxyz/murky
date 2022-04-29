@@ -8,7 +8,7 @@ abstract contract MurkyBase {
     constructor() {}
 
     /********************
-    * HASING FUNCTIONS *
+    * VIRTUAL HASHING FUNCTIONS *
     ********************/
     function hashLeafPairs(bytes32 left, bytes32 right) public pure virtual returns (bytes32 _hash);
 
@@ -50,7 +50,7 @@ abstract contract MurkyBase {
         // Two overflow risks: node, pos
         // node: max array size is 2**256-1. Largest index in the array will be 1 less than that. Also,
            // for dynamic arrays, size is limited to 2**64-1
-        // pos: pos is bounded by log2(data.length), which should be less than type(uint256).max 
+        // pos: pos is bounded by log2(data.length), which should be less than type(uint256).max
         while(data.length > 1) {
             unchecked {
                 if(node % 2 == 1) {
@@ -63,7 +63,7 @@ abstract contract MurkyBase {
                     result[pos] = data[node + 1];
                 }
                 ++pos;
-                node = node / 2;
+                node /= 2;
             }
             data = hashLevel(data);
         }
@@ -73,16 +73,19 @@ abstract contract MurkyBase {
     function hashLevel(bytes32[] memory data) internal pure returns (bytes32[] memory) {
         bytes32[] memory result;
 
-        uint256 length = data.length;
-        if (length % 2 == 1){
-            result = new bytes32[](length / 2 + 1);
-            result[result.length - 1] = hashLeafPairs(data[length - 1], bytes32(0));
-        } else {
-            result = new bytes32[](length / 2);
-        }
-
-        // pos is upper bounded by data.length / 2, so safe even if array is at max size
+        // Function is internal, and all internal callers check that data.length >=2.
+        // Underflow is not possible as lowest possible value for data/result index is 1
+        // overflow is as length is  / 2 always. 
         unchecked {
+            uint256 length = data.length;
+            if (length % 2 == 1){
+                result = new bytes32[](length / 2 + 1);
+                result[result.length - 1] = hashLeafPairs(data[length - 1], bytes32(0));
+            } else {
+                result = new bytes32[](length / 2);
+        }
+        // pos is upper bounded by data.length / 2, so safe even if array is at max size
+        //unchecked {
             uint256 pos = 0;
             for (uint256 i = 0; i < length-1; i+=2){
                 result[pos] = hashLeafPairs(data[i], data[i+1]);
