@@ -70,12 +70,13 @@ abstract contract MurkyBase {
         return result;
     }
 
-    function hashLevel(bytes32[] memory data) internal pure returns (bytes32[] memory) {
+    ///@dev function is private to prevent unsafe data from being passed
+    function hashLevel(bytes32[] memory data) private pure returns (bytes32[] memory) {
         bytes32[] memory result;
 
-        // Function is internal, and all internal callers check that data.length >=2.
+        // Function is private, and all internal callers check that data.length >=2.
         // Underflow is not possible as lowest possible value for data/result index is 1
-        // overflow is as length is  / 2 always. 
+        // overflow should be safe as length is / 2 always. 
         unchecked {
             uint256 length = data.length;
             if (length % 2 == 1){
