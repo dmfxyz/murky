@@ -86,7 +86,6 @@ abstract contract MurkyBase {
                 result = new bytes32[](length / 2);
         }
         // pos is upper bounded by data.length / 2, so safe even if array is at max size
-        //unchecked {
             uint256 pos = 0;
             for (uint256 i = 0; i < length-1; i+=2){
                 result[pos] = hashLeafPairs(data[i], data[i+1]);
@@ -103,8 +102,10 @@ abstract contract MurkyBase {
     /// @dev  Note that x is assumed > 0
     function log2ceil_naive(uint256 x) public pure returns (uint256) {
         uint256 ceil = 0;
-        uint256 lsb = (~x + 1) & x;
-        bool powerOf2 = x == lsb;
+        uint pOf2;  // TODO: !dmfxyz! Explain this
+        assembly {
+            pOf2 := eq(and(add(not(x), 1), x), x)
+        }
         
         // if x == type(uint256).max, than ceil is capped at 256
         // if x == 0, then (~x + 1) & x == 0, so ceil won't underflow
@@ -113,9 +114,7 @@ abstract contract MurkyBase {
                 x >>= 1;
                 ceil++;
             }
-            if (powerOf2) {
-                ceil--;
-            }
+            ceil -= pOf2;
         }
         return ceil;
     }
