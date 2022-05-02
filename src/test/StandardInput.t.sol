@@ -5,8 +5,6 @@ import "../Merkle.sol";
 import "forge-std/Test.sol";
 
 contract StandardizedInputTest is Test {
-
-    // Contracts (to be migrated to libraries)
     Xorkle x;
     Merkle m;
     bytes32[100] data;

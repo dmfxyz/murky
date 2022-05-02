@@ -6,8 +6,6 @@ import "forge-std/Test.sol";
 import "openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol";
 
 contract ContractTest is Test {
-
-    
     Merkle m;
     function setUp() public {
         m = new Merkle();

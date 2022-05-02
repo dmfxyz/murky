@@ -64,5 +64,3 @@ There is also early support for [differential  testing](./differential_testing/)
 - [x] Write some FFI tests to verify compatibility with [uniswap merkle deployer](https://github.com/Uniswap/merkle-distributor/tree/master/src)
 
 - [ ] \* Do a writeup on the use-cases for XORs.
-- [ ] Migrate to library and adjust testing accordingly
-

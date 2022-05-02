@@ -9,8 +9,8 @@ import "./utils/Strings2.sol";
 
 contract DifferentialTests is Test {
     using Strings for uint;
-    using Strings2 for bytes;
-    // Contracts (to be migrated to libraries)
+    using {Strings2.toHexString} for bytes;
+
     Merkle m;
     bytes32[129] data;
 
