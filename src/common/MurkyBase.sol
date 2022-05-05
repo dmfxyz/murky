@@ -53,7 +53,7 @@ abstract contract MurkyBase {
         // pos: pos is bounded by log2(data.length), which should be less than type(uint256).max
         while(data.length > 1) {
             unchecked {
-                if(node % 2 == 1) {
+                if(node & 0x1 == 1) {
                     result[pos] = data[node - 1];
                 } 
                 else if (node + 1 == data.length) {
@@ -79,7 +79,7 @@ abstract contract MurkyBase {
         // overflow should be safe as length is / 2 always. 
         unchecked {
             uint256 length = data.length;
-            if (length % 2 == 1){
+            if (length & 0x1 == 1){
                 result = new bytes32[](length / 2 + 1);
                 result[result.length - 1] = hashLeafPairs(data[length - 1], bytes32(0));
             } else {
