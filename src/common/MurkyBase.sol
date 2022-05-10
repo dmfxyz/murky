@@ -102,19 +102,39 @@ abstract contract MurkyBase {
     /// @dev  Note that x is assumed > 0
     function log2ceil_naive(uint256 x) public pure returns (uint256) {
         uint256 ceil = 0;
-        uint pOf2;  // TODO: !dmfxyz! Explain this
+        uint pOf2;
+        // If x is a power of 2, then this function will return a ceiling
+        // that is 1 greater than the actual ceiling. So we need to check if
+        // x is a power of 2, and subtract one from ceil if so. 
         assembly {
+            // we check by seeing if x == (~x + 1) & x. This applies a mask
+            // to find the lowest set bit of x and then checks it for equality
+            // with x. If they are equal, then x is a power of 2.
+
+            /* Example
+                x has single bit set
+                x := 0000_1000
+                (~x + 1) = (1111_0111) + 1 = 1111_1000
+                (1111_1000 & 0000_1000) = 0000_1000 == x
+
+                x has multiple bits set
+                x := 1001_0010
+                (~x + 1) = (0110_1101 + 1) = 0110_1110
+                (0110_1110 & x) = 0000_0010 != x
+            */
+
+            // we do some assembly magic to treat the bool as an integer later on
             pOf2 := eq(and(add(not(x), 1), x), x)
         }
         
         // if x == type(uint256).max, than ceil is capped at 256
-        // if x == 0, then (~x + 1) & x == 0, so ceil won't underflow
+        // if x == 0, then pO2 == 0, so ceil won't underflow
         unchecked {
             while( x > 0) {
                 x >>= 1;
                 ceil++;
             }
-            ceil -= pOf2;
+            ceil -= pOf2; // see above
         }
         return ceil;
     }
