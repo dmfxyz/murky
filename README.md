@@ -56,11 +56,4 @@ There is also early support for [differential  testing](./differential_testing/)
 
 ---
 #### TODO
-- [x] Create standardized tests using FFI
-- [x] Abstract out base implementation
-- [x] Test results match with openzeppelin verification implementation
-- [x] Update existing FFI test data to be less high MSB biased. Also, in general the standardized testing design needs some work.
-- [x] Gas optimization for GenericMerkle (and also some lingering optimizations for merkle)(Note: done for now, there is higher priority work)
-- [x] Write some FFI tests to verify compatibility with [uniswap merkle deployer](https://github.com/Uniswap/merkle-distributor/tree/master/src)
-
 - [ ] \* Do a writeup on the use-cases for XORs.
