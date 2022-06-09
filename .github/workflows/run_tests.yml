@@ -1,0 +1,30 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+name: Run Tests
+
+jobs:
+  check:
+    name: Foundry project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Run Fuzzed Unit Tests
+        run: forge test --no-match-path src/test/StandardInput.t.sol 
+
+      - name: Run Differential Tests
+        run: forge test --ffi -c differential_testing/test/DifferentialTests.t.sol
+
+      - name: Run Standard Gas Snapshotting
+        run: forge snapshot --gas-report --ffi --match-path src/test/StandardInput.t.sol
