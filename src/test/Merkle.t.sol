@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.13;
+pragma solidity ^0.8.4;
 
 import "../Merkle.sol";
 import "forge-std/Test.sol";
