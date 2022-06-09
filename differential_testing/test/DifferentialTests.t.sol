@@ -1,4 +1,4 @@
-pragma solidity 0.8.13;
+pragma solidity ^0.8.4;
 
 import "../../src/Merkle.sol";
 import "forge-std/Test.sol";
