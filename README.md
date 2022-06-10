@@ -1,5 +1,5 @@
 ## Merkle Generator and Prover in Solidity
-![Tests](https://github.com/dmfxyz/murky/actions/workflows/run_tests.yml/badge.svg)
+![Tests](https://github.com/dmfxyz/murky/actions/workflows/run_tests.yml/badge.svg?event=push)
 
 Murky contains contracts that can generate merkle roots and proofs. Murky also performs inclusion verification. Both XOR-based and a concatenation-based hashing are currently supported.
 
