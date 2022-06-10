@@ -30,7 +30,7 @@ jobs:
         run: |
           npm --prefix differential_testing/scripts/ install
           npm --prefix differential_testing/scripts/ run compile
-          forge test --ffi -c differential_testing/test/DifferentialTests.t.sol 
+          FOUNDRY_FUZZ_RUNS=512 forge test --ffi -c differential_testing/test/DifferentialTests.t.sol 
 
       - name: Run Standard Gas Snapshotting
         run: forge snapshot --gas-report --ffi --match-path src/test/StandardInput.t.sol
