@@ -22,15 +22,15 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
         with:
           version: nightly
-
+      
+      - name: Run Fuzzed Unit Tests
+        run: forge test --no-match-path src/test/StandardInput.t.sol
+      
       - name: Run Differential Tests
         run: |
           npm --prefix differential_testing/scripts/ install
           npm --prefix differential_testing/scripts/ run compile
-          npm --prefix differential_testing/scripts/ --silent run generate-root
-      
-      - name: Run Fuzzed Unit Tests
-        run: forge test --no-match-path src/test/StandardInput.t.sol 
+          forge test --ffi -c differential_testing/test/DifferentialTests.t.sol 
 
       - name: Run Standard Gas Snapshotting
         run: forge snapshot --gas-report --ffi --match-path src/test/StandardInput.t.sol
