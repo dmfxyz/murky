@@ -1,0 +1,15 @@
+name: Slither Analysis
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: crytic/slither-action@v0.1.1
+        with:
+          target: 'src/'
+          slither-args: '--exclude-informational --checklist'
