@@ -44,7 +44,7 @@ abstract contract MurkyBase {
     function getProof(bytes32[] memory data, uint256 node) public pure returns (bytes32[] memory) {
         require(data.length > 1, "won't generate proof for single leaf");
         // The size of the proof is equal to the ceiling of log2(numLeaves) 
-        bytes32[] memory result = new bytes32[](log2ceil(data.length));
+        bytes32[] memory result = new bytes32[](log2ceilBitMagic(data.length));
         uint256 pos = 0;
 
         // Two overflow risks: node, pos
@@ -145,7 +145,7 @@ abstract contract MurkyBase {
         if (x <= 1) {
             return 0;
         }
-        uint256 msb;
+        uint256 msb = 0;
         uint256 _x = x;
         if (x >= 2**128) {
             x >>= 128;
