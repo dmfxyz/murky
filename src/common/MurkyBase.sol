@@ -17,7 +17,7 @@ abstract contract MurkyBase {
     * PROOF VERIFICATION *
     **********************/
     
-    function verifyProof(bytes32 root, bytes32[] memory proof, bytes32 valueToProve) public pure returns (bool) {
+    function verifyProof(bytes32 root, bytes32[] memory proof, bytes32 valueToProve) external pure returns (bool) {
         // proof length must be less than max array size
         bytes32 rollingHash = valueToProve;
         uint256 length = proof.length;
@@ -44,7 +44,7 @@ abstract contract MurkyBase {
     function getProof(bytes32[] memory data, uint256 node) public pure returns (bytes32[] memory) {
         require(data.length > 1, "won't generate proof for single leaf");
         // The size of the proof is equal to the ceiling of log2(numLeaves) 
-        bytes32[] memory result = new bytes32[](log2ceil_naive(data.length));
+        bytes32[] memory result = new bytes32[](log2ceil(data.length));
         uint256 pos = 0;
 
         // Two overflow risks: node, pos
@@ -100,7 +100,7 @@ abstract contract MurkyBase {
     ******************/
     
     /// @dev  Note that x is assumed > 0
-    function log2ceil_naive(uint256 x) public pure returns (uint256) {
+    function log2ceil(uint256 x) public pure returns (uint256) {
         uint256 ceil = 0;
         uint pOf2;
         // If x is a power of 2, then this function will return a ceiling
@@ -141,7 +141,7 @@ abstract contract MurkyBase {
 
     /// Original bitmagic adapted from https://github.com/paulrberg/prb-math/blob/main/contracts/PRBMath.sol
     /// @dev Note that x assumed > 1
-    function log2ceil_bitmagic(uint256 x) public pure returns (uint256){
+    function log2ceilBitMagic(uint256 x) public pure returns (uint256){
         if (x <= 1) {
             return 0;
         }

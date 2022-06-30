@@ -10,22 +10,22 @@ contract MurkyBaseTest is Test, MurkyBase {
         return bytes32(0x0);
     }
 
-    function testLogCeil_naive(uint256 x) public{
+    function testLogCeil(uint256 x) public{
         vm.assume(x > 0);
-        this.log2ceil_naive(x);
+        this.log2ceil(x);
     }
 
-    function testLogCeil_bitmagic(uint256 x) public {
+    function testLogCeilBitMagic(uint256 x) public {
         vm.assume(x > 0);
-        this.log2ceil_bitmagic(x);
+        this.log2ceilBitMagic(x);
     }
 
 
     function testLogCeil_KnownPowerOf2() public {
-        assertEq(3, this.log2ceil_bitmagic(8));
+        assertEq(3, this.log2ceilBitMagic(8));
     }
     function testLogCeil_Known() public {
-        assertEq(8, this.log2ceil_bitmagic(129));
+        assertEq(8, this.log2ceilBitMagic((129)));
     }
 
 }
