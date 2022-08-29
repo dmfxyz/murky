@@ -12,7 +12,6 @@ abstract contract MurkyBase {
     ********************/
     function hashLeafPairs(bytes32 left, bytes32 right) public pure virtual returns (bytes32 _hash);
 
-
     /**********************
     * PROOF VERIFICATION *
     **********************/
@@ -33,7 +32,7 @@ abstract contract MurkyBase {
     * PROOF GENERATION *
     ********************/
 
-    function getRoot(bytes32[] memory data) public pure returns (bytes32) {
+    function getRoot(bytes32[] memory data) external pure returns (bytes32) {
         require(data.length > 1, "won't generate root for single leaf");
         while(data.length > 1) {
             data = hashLevel(data);
@@ -41,11 +40,11 @@ abstract contract MurkyBase {
         return data[0];
     }
 
-    function getProof(bytes32[] memory data, uint256 node) public pure returns (bytes32[] memory) {
+    function getProof(bytes32[] memory data, uint256 node) external pure returns (bytes32[] memory) {
         require(data.length > 1, "won't generate proof for single leaf");
         // The size of the proof is equal to the ceiling of log2(numLeaves) 
         bytes32[] memory result = new bytes32[](log2ceilBitMagic(data.length));
-        uint256 pos = 0;
+        uint256 pos;
 
         // Two overflow risks: node, pos
         // node: max array size is 2**256-1. Largest index in the array will be 1 less than that. Also,
@@ -116,7 +115,6 @@ abstract contract MurkyBase {
                 x := 0000_1000
                 (~x + 1) = (1111_0111) + 1 = 1111_1000
                 (1111_1000 & 0000_1000) = 0000_1000 == x
-
                 x has multiple bits set
                 x := 1001_0010
                 (~x + 1) = (0110_1101 + 1) = 0110_1110
@@ -141,11 +139,11 @@ abstract contract MurkyBase {
 
     /// Original bitmagic adapted from https://github.com/paulrberg/prb-math/blob/main/contracts/PRBMath.sol
     /// @dev Note that x assumed > 1
-    function log2ceilBitMagic(uint256 x) public pure returns (uint256){
+    function log2ceilBitMagic(uint256 x) internal pure returns (uint256){
         if (x <= 1) {
             return 0;
         }
-        uint256 msb = 0;
+        uint256 msb;
         uint256 _x = x;
         if (x >= 2**128) {
             x >>= 128;
