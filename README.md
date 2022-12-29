@@ -14,7 +14,7 @@ You can currently see Murky in action in the [Seaport](https://github.com/Projec
 ### Building Locally
 You can run the repo using [Foundry](https://github.com/gakonst/foundry).
 1. clone the repo
-2. ```git submodule update --init```
+2. `forge install`
 3. `forge test`
 
 ### Example Usage
