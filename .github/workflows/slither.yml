@@ -9,7 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: crytic/slither-action@v0.1.1
+      - uses: crytic/slither-action@v0.2.0
         with:
           target: 'src/'
           slither-args: '--exclude-informational --checklist'
+          fail-on: 'low'
