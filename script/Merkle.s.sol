@@ -7,44 +7,50 @@ import "forge-std/console.sol";
 import "../src/Merkle.sol";
 import "./common/ScriptHelper.sol";
 
+/// @notice Merkle proof generator script
+/// @author kootsZhin
 contract MerkleScript is Script, ScriptHelper {
     using stdJson for string;
 
+    Merkle private m = new Merkle();
+
+    string private inputPath = "/script/target/input.json";
+    string private outputPath = "/script/target/output.json";
+
+    string private elements = vm.readFile(string.concat(vm.projectRoot(), inputPath));
+    string[] private types = elements.readStringArray(".types");
+    uint256 private count = elements.readUint(".count");
+
+
+    bytes32[] private leafs = new bytes32[](count);
+
+    string[] private inputs = new string[](count);
+    string[] private outputs = new string[](count);
+
+    string private output;
+
+    /// @dev Returns the JSON path of the input file
     function getValuesByIndex(uint256 i, uint256 j) internal pure returns (string memory) {
         return string.concat(".values.", vm.toString(i), ".", vm.toString(j));
     }
 
-    function generateJsonEntries(string memory inputs, string memory proof, string memory root, string memory leaf) internal pure returns (string memory) {
+    /// @dev Generate the JSON entries for the output file
+    function generateJsonEntries(string memory _inputs, string memory _proof, string memory _root, string memory _leaf) internal pure returns (string memory) {
         string memory result = string.concat(
             "{",
-            "\"inputs\":", inputs, ",",
-            "\"proof\":", proof, ",",
-            "\"root\":\"", root, "\",",
-            "\"leaf\":\"", leaf, "\"",
+            "\"inputs\":", _inputs, ",",
+            "\"proof\":", _proof, ",",
+            "\"root\":\"", _root, "\",",
+            "\"leaf\":\"", _leaf, "\"",
             "}"
         );
 
         return result;
     }
 
+    /// @dev Read the input file and generate the Merkle proof, then write the output file
     function run() public {
-        Merkle m = new Merkle();
-
-        string memory inputPath = "/script/target/input.json";
-        string memory outputPath = "/script/target/output.json";
-
         console.log("Generating Merkle Proof for %s", inputPath);
-
-        string memory elements = vm.readFile(string.concat(vm.projectRoot(), inputPath));
-
-        string[] memory types = elements.readStringArray(".types");
-        uint256 count = elements.readUint(".count");
-
-        bytes32[] memory leafs = new bytes32[](count);
-        string[] memory inputs = new string[](count);
-
-        string[] memory outputs = new string[](count);
-        string memory output;
 
         for (uint256 i = 0; i < count; ++i) {
             string[] memory input = new string[](types.length);
