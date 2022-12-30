@@ -21,7 +21,7 @@ contract MerkleScriptOutputTest is Test, ScriptHelper {
     bytes32 leaf =
         0x035e33df50de019c2fdafb75e088976405fe8806b0341fa28db67c78e5e7f0e7;
 
-    address inputAddr = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
+    address addr = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
     uint256 value = 10000;
     uint256 index = 1;
 
@@ -46,17 +46,17 @@ contract MerkleScriptOutputTest is Test, ScriptHelper {
     }
 
     function testComputeLeaf() public {
-        bytes32 computedLeaf = keccak256(bytes.concat(keccak256(abi.encode(inputAddr, value, index))));
+        bytes32 computedLeaf = keccak256(bytes.concat(keccak256(abi.encode(addr, value, index))));
         assertEq(computedLeaf, leaf);
     }
 
     function testVerify() public {
-        bytes32 computedLeaf = keccak256(bytes.concat(keccak256(abi.encode(inputAddr, value, index))));
+        bytes32 computedLeaf = keccak256(bytes.concat(keccak256(abi.encode(addr, value, index))));
         assertTrue(MerkleProof.verify(proof, root, computedLeaf));
     }
 
     function testFalseAddress(address a) public {
-        vm.assume(a != inputAddr);
+        vm.assume(a != addr);
 
         bytes32 computedLeaf = keccak256(bytes.concat(keccak256(abi.encode(a, value, index))));
         assertFalse(MerkleProof.verify(proof, root, computedLeaf));
@@ -66,7 +66,7 @@ contract MerkleScriptOutputTest is Test, ScriptHelper {
         vm.assume(b != value);
         vm.assume(c != index);
 
-        bytes32 computedLeaf = keccak256(bytes.concat(keccak256(abi.encode(inputAddr, b, c))));
+        bytes32 computedLeaf = keccak256(bytes.concat(keccak256(abi.encode(addr, b, c))));
         assertFalse(MerkleProof.verify(proof, root, computedLeaf));
     }
 }

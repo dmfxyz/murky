@@ -7,6 +7,12 @@ import "forge-std/console.sol";
 import "../src/Merkle.sol";
 import "./common/ScriptHelper.sol";
 
+// Merkle proof generator script
+// To use:
+// 1. Update the input.json file in /script/target/input.json
+// 2. Run `forge script script/Merkle.s.sol`
+// 3. The output file will be generated in /script/target/output.json
+
 /// @notice Merkle proof generator script
 /// @author kootsZhin
 contract MerkleScript is Script, ScriptHelper {
