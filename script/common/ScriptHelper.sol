@@ -8,6 +8,13 @@ contract ScriptHelper is Script {
         return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
     }
 
+    // TODO: debug 
+    function ltrim64(bytes memory _data) internal pure returns(bytes memory data) {
+        for (uint i = 64; i < _data.length; ++i) {
+            data[i] = _data[i];
+        }
+    }
+
     function stringArrayToString(string[] memory array) internal pure returns (string memory) {
         string memory result = "[";
 
