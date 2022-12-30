@@ -14,9 +14,28 @@ contract MerkleScript is Script, ScriptHelper {
         return string.concat(".values.", vm.toString(i), ".", vm.toString(j));
     }
 
+    function generateJsonEntries(string memory inputs, string memory proof, string memory root, string memory leaf) internal pure returns (string memory) {
+        string memory result = string.concat(
+            "{",
+            "\"inputs\":", inputs, ",",
+            "\"proof\":", proof, ",",
+            "\"root\":\"", root, "\",",
+            "\"leaf\":\"", leaf, "\"",
+            "}"
+        );
+
+        return result;
+    }
+
     function run() public {
-        string memory path = string.concat(vm.projectRoot(), "/script/target/input.json");
-        string memory elements = vm.readFile(path);
+        Merkle m = new Merkle();
+
+        string memory inputPath = "/script/target/input.json";
+        string memory outputPath = "/script/target/output.json";
+
+        console.log("Generating Merkle Proof for %s", inputPath);
+
+        string memory elements = vm.readFile(string.concat(vm.projectRoot(), inputPath));
 
         string[] memory types = elements.readStringArray(".types");
         uint count = elements.readUint(".count");
@@ -24,40 +43,41 @@ contract MerkleScript is Script, ScriptHelper {
         bytes32[] memory leafs = new bytes32[](count);
         string[] memory inputs = new string[](count);
 
-        for (uint i = 0; i < count; i++) {
+        string[] memory outputs = new string[](count);
+        string memory output;
+
+        for (uint i = 0; i < count; ++i) {
             bytes memory data;
             string[] memory input = new string[](types.length);
 
-            for (uint j = 0; j < types.length; j++) {
+            for (uint j = 0; j < types.length; ++j) {
                 if (compareStrings(types[j], "address")) {
                     address value = elements.readAddress(getValuesByIndex(i, j));
-                    console.log(types[j], value);
                     data = abi.encodePacked(data, value);
                     input[j] = vm.toString(value);
                 } else if (compareStrings(types[j], "uint")) {
                     uint value = vm.parseUint(elements.readString(getValuesByIndex(i, j)));
-                    console.log(types[j], value);
                     data = abi.encodePacked(data, value);
                     input[j] = vm.toString(value);
                 }
             }
-            // console.log(keccak256(bytes.concat(keccak256(data))) == keccak256(data));
-            // console.log(vm.toString(keccak256(bytes.concat(keccak256(data)))));
-            // console.log(vm.toString(keccak256(data)));
+
             leafs[i] = keccak256(bytes.concat(keccak256(data)));
             inputs[i] = stringArrayToString(input);
-
-            console.log("input", stringArrayToString(input));
         }
 
-        Merkle m = new Merkle();
-        bytes32 root = m.getRoot(leafs);
-        bytes32[] memory proof = m.getProof(leafs, 2);
-        console.log("proof", bytes32ArrayToString(proof));
+        for (uint i = 0; i < count; ++i) {
+            string memory proof = bytes32ArrayToString(m.getProof(leafs, i));
+            string memory root = vm.toString(m.getRoot(leafs));
+            string memory leaf = vm.toString(leafs[i]);
+            string memory input = inputs[i];
 
-        console.log("root", vm.toString(root));
+            outputs[i] = generateJsonEntries(input, proof, root, leaf);
+        }
 
-        bool verified = m.verifyProof(root, m.getProof(leafs, 2), leafs[2]);
-        console.log("verified", verified);
+        output = stringArrayToArrayString(outputs);
+        vm.writeFile(string.concat(vm.projectRoot(), outputPath), output);
+
+        console.log("DONE: The output is found at %s", inputPath);
     }
 }

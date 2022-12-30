@@ -13,6 +13,18 @@ contract ScriptHelper is Script {
 
         for (uint i = 0; i < array.length; i++) {
             if (i != array.length - 1)
+                result = string.concat(result, "\"", array[i], "\",");
+            else
+                result = string.concat(result, "\"", array[i], "\"");
+        }
+
+        return string.concat(result, "]");
+    }
+    function stringArrayToArrayString(string[] memory array) internal pure returns (string memory) {
+        string memory result = "[";
+
+        for (uint i = 0; i < array.length; i++) {
+            if (i != array.length - 1)
                 result = string.concat(result, array[i], ",");
             else
                 result = string.concat(result, array[i]);
@@ -26,9 +38,9 @@ contract ScriptHelper is Script {
 
         for (uint i = 0; i < array.length; i++) {
             if (i != array.length - 1)
-                result = string.concat(result, vm.toString(array[i]), ",");
+                result = string.concat(result, "\"", vm.toString(array[i]), "\",");
             else
-                result = string.concat(result, vm.toString(array[i]));
+                result = string.concat(result, "\"", vm.toString(array[i]), "\"");
         }
 
         return string.concat(result, "]");
