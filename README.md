@@ -39,6 +39,15 @@ assertTrue(verified);
 
 * `Merkle.sol` is implemented using concatenation and thus is a generic merkle tree. It's less efficient, but is compatible with [OpenZeppelin's Prover](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/MerkleProof.sol) and other implementations. Use this one if you aren't sure. Compatiblity with OZ Prover is implemented as a fuzz test.
 
+### Script
+`Merkle.s.sol` is implemented using `forge-std` for quick and simple interaction with the core contracts. The script reads from `script/target/input.json`, generates merkle proof using `Merkle.sol` and then outputs at `script/target/output.json`.
+
+The hashes of the leafs are generated using `keccak256(bytes.concat(keccak256(abi.encode(...))))`, which is the same as [`OpenZeppelin/merkle-tree`](https://github.com/OpenZeppelin/merkle-tree#validating-a-proof-in-solidity).
+
+```bash
+forge script script/Merkle.s.sol
+```
+
 ### Testing
 The code is both "fuzz" tested and tested with standardized data. [Standard data info](./src/test/standard_data/).
 
