@@ -38,7 +38,7 @@ abstract contract MurkyBase {
      * PROOF GENERATION *
      *
      */
-    function getRoot(bytes32[] memory data) public pure returns (bytes32) {
+    function getRoot(bytes32[] memory data) public pure virtual returns (bytes32) {
         require(data.length > 1, "won't generate root for single leaf");
         while (data.length > 1) {
             data = hashLevel(data);
