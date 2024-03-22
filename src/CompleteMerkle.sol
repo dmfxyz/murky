@@ -10,6 +10,23 @@ contract CompleteMerkle {
      * HASHING FUNCTION *
      *
      */
+
+
+    function hashLeafPairs(bytes32 left, bytes32 right) public pure returns (bytes32 _hash) {
+        assembly {
+        switch lt(left, right)
+                case 0 {
+                    mstore(0x0, right)
+                    mstore(0x20, left)
+                }
+                default {
+                    mstore(0x0, left)
+                    mstore(0x20, right)
+                }
+                _hash := keccak256(0x0, 0x40)
+            }
+    }
+
     function initTree(bytes32[] memory data) private pure returns (bytes32[] memory) {
         require(data.length > 1, "wont generate root for single leaf");
 
@@ -53,6 +70,7 @@ contract CompleteMerkle {
     }
 
     function getRoot(bytes32[] memory data) public pure returns (bytes32) {
+        require(data.length > 1, "won't generate root for single leaf");
         bytes32[] memory tree = buildTree(data);
         return tree[0];
     }
@@ -83,7 +101,7 @@ contract CompleteMerkle {
     }
 
     function getProof(bytes32[] memory data, uint256 index) public pure returns (bytes32[] memory) {
-        require(index < data.length);
+        require(data.length > 1, "won't generate proof for single leaf");
         bytes32[] memory tree = buildTree(data);
 
         assembly {
