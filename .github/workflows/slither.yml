@@ -9,8 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: crytic/slither-action@v0.2.0
+      - uses: crytic/slither-action@v0.3.1
         with:
-          target: 'src/'
-          slither-args: '--exclude-informational --checklist'
+          slither-args: '--exclude-informational --checklist --show-ignored-findings'
           fail-on: 'low'
