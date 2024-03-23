@@ -5,7 +5,6 @@ import "forge-std/Script.sol";
 
 /// @notice Helper functions for scripts
 contract ScriptHelper is Script {
-
     /// @dev Compares two strings and returns true iff they are equal.
     function compareStrings(string memory a, string memory b) internal pure returns (bool) {
         return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
@@ -15,7 +14,7 @@ contract ScriptHelper is Script {
     function ltrim64(bytes memory _bytes) internal pure returns (bytes memory) {
         return slice(_bytes, 64, _bytes.length - 64);
     }
-    
+
     /// @dev Returns a slice of `_bytes` starting at index `_start` and of length `_length`.
     /// referenece: https://github.com/GNSPS/solidity-bytes-utils/blob/6458fb2780a3092bc756e737f246be1de6d3d362/contracts/BytesLib.sol#L228
     function slice(bytes memory _bytes, uint256 _start, uint256 _length) internal pure returns (bytes memory) {
@@ -33,14 +32,10 @@ contract ScriptHelper is Script {
                 let mc := add(add(tempBytes, lengthmod), mul(0x20, iszero(lengthmod)))
                 let end := add(mc, _length)
 
-                for {
-                    let cc := add(add(add(_bytes, lengthmod), mul(0x20, iszero(lengthmod))), _start)
-                } lt(mc, end) {
+                for { let cc := add(add(add(_bytes, lengthmod), mul(0x20, iszero(lengthmod))), _start) } lt(mc, end) {
                     mc := add(mc, 0x20)
                     cc := add(cc, 0x20)
-                } {
-                    mstore(mc, mload(cc))
-                }
+                } { mstore(mc, mload(cc)) }
 
                 mstore(tempBytes, _length)
                 mstore(0x40, and(add(mc, 31), not(31)))
@@ -59,11 +54,12 @@ contract ScriptHelper is Script {
     function stringArrayToString(string[] memory array) internal pure returns (string memory) {
         string memory result = "[";
 
-        for (uint i = 0; i < array.length; i++) {
-            if (i != array.length - 1)
+        for (uint256 i = 0; i < array.length; i++) {
+            if (i != array.length - 1) {
                 result = string.concat(result, "\"", array[i], "\",");
-            else
+            } else {
                 result = string.concat(result, "\"", array[i], "\"");
+            }
         }
 
         return string.concat(result, "]");
@@ -73,11 +69,12 @@ contract ScriptHelper is Script {
     function stringArrayToArrayString(string[] memory array) internal pure returns (string memory) {
         string memory result = "[";
 
-        for (uint i = 0; i < array.length; i++) {
-            if (i != array.length - 1)
+        for (uint256 i = 0; i < array.length; i++) {
+            if (i != array.length - 1) {
                 result = string.concat(result, array[i], ",");
-            else
+            } else {
                 result = string.concat(result, array[i]);
+            }
         }
 
         return string.concat(result, "]");
@@ -87,11 +84,12 @@ contract ScriptHelper is Script {
     function bytes32ArrayToString(bytes32[] memory array) internal pure returns (string memory) {
         string memory result = "[";
 
-        for (uint i = 0; i < array.length; i++) {
-            if (i != array.length - 1)
+        for (uint256 i = 0; i < array.length; i++) {
+            if (i != array.length - 1) {
                 result = string.concat(result, "\"", vm.toString(array[i]), "\",");
-            else
+            } else {
                 result = string.concat(result, "\"", vm.toString(array[i]), "\"");
+            }
         }
 
         return string.concat(result, "]");

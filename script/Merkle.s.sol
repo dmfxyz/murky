@@ -27,7 +27,6 @@ contract MerkleScript is Script, ScriptHelper {
     string[] private types = elements.readStringArray(".types");
     uint256 private count = elements.readUint(".count");
 
-
     bytes32[] private leafs = new bytes32[](count);
 
     string[] private inputs = new string[](count);
@@ -41,13 +40,25 @@ contract MerkleScript is Script, ScriptHelper {
     }
 
     /// @dev Generate the JSON entries for the output file
-    function generateJsonEntries(string memory _inputs, string memory _proof, string memory _root, string memory _leaf) internal pure returns (string memory) {
+    function generateJsonEntries(string memory _inputs, string memory _proof, string memory _root, string memory _leaf)
+        internal
+        pure
+        returns (string memory)
+    {
         string memory result = string.concat(
             "{",
-            "\"inputs\":", _inputs, ",",
-            "\"proof\":", _proof, ",",
-            "\"root\":\"", _root, "\",",
-            "\"leaf\":\"", _leaf, "\"",
+            "\"inputs\":",
+            _inputs,
+            ",",
+            "\"proof\":",
+            _proof,
+            ",",
+            "\"root\":\"",
+            _root,
+            "\",",
+            "\"leaf\":\"",
+            _leaf,
+            "\"",
             "}"
         );
 
