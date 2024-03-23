@@ -10,21 +10,19 @@ contract CompleteMerkle {
      * HASHING FUNCTION *
      *
      */
-
-
     function hashLeafPairs(bytes32 left, bytes32 right) public pure returns (bytes32 _hash) {
         assembly {
-        switch lt(left, right)
-                case 0 {
-                    mstore(0x0, right)
-                    mstore(0x20, left)
-                }
-                default {
-                    mstore(0x0, left)
-                    mstore(0x20, right)
-                }
-                _hash := keccak256(0x0, 0x40)
+            switch lt(left, right)
+            case 0 {
+                mstore(0x0, right)
+                mstore(0x20, left)
             }
+            default {
+                mstore(0x0, left)
+                mstore(0x20, right)
+            }
+            _hash := keccak256(0x0, 0x40)
+        }
     }
 
     function initTree(bytes32[] memory data) private pure returns (bytes32[] memory) {
@@ -44,6 +42,10 @@ contract CompleteMerkle {
 
     function buildTree(bytes32[] memory data) public pure returns (bytes32[] memory) {
         bytes32[] memory tree = initTree(data);
+        // for (uint256 i = tree.length - 1; i > 0; i -= 2) {
+        //     uint256 posToWrite = (i - 1) / 2;
+        //     tree[posToWrite] = hashLeafPairs(tree[i - 1], tree[i]);
+        // }
         assembly {
             function hash_leafs(left, right) -> _hash {
                 switch lt(left, right)
@@ -70,7 +72,7 @@ contract CompleteMerkle {
     }
 
     function getRoot(bytes32[] memory data) public pure returns (bytes32) {
-        require(data.length > 1, "won't generate root for single leaf");
+        require(data.length > 1, "wont generate root for single leaf");
         bytes32[] memory tree = buildTree(data);
         return tree[0];
     }
@@ -89,7 +91,7 @@ contract CompleteMerkle {
                 }
                 _hash := keccak256(0x0, 0x40)
             }
-            let roll := mload(0x40)
+            let roll := mload(0x40) // TODO CHECK Sv.s.M
             mstore(roll, valueToProve)
             let len := mload(proof)
             for { let i := 0 } lt(i, len) { i := add(i, 1) } {
@@ -101,37 +103,30 @@ contract CompleteMerkle {
     }
 
     function getProof(bytes32[] memory data, uint256 index) public pure returns (bytes32[] memory) {
-        require(data.length > 1, "won't generate proof for single leaf");
+        require(data.length > 1, "wont generate proof for single leaf");
         bytes32[] memory tree = buildTree(data);
 
-        assembly {
+        assembly ("memory-safe") {
             let iter := sub(sub(mload(tree), index), 0x1)
             let ptr := mload(0x40)
             mstore(ptr, 0x20)
             let proofSizePtr := add(ptr, 0x20)
-            let proofIndexPtr := proofSizePtr
-            for {} eq(0x0, 0x0) {} {
-                // WHile true
-                switch eq(iter, 0)
-                case 1 { break }
-                mstore(proofSizePtr, add(mload(proofSizePtr), 0x1))
+            let proofIndexPtr := add(ptr, 0x40)
+            for {} 0x1 {} {
+                // while (true)
+                let sibling := mload(add(tree, mul(add(iter, shl(0x1, and(iter, 0x1))), 0x20))) // TODO: can iter mul also be accomplised by shifting? is iter always going to be either 0 or 0x1
+                    // something like shr(0x20, mul(iter()) ehh prob not
+                mstore(proofIndexPtr, sibling)
+                //iter := div(add(sub(iter,1), and(iter,0x1)), 2) // 82 108
+                //iter := div(sub(iter,eq(and(iter,0x1), 0x0)), 2) // 181 231 -- 187 201 -- 184 211
+                iter := shr(1, sub(iter, eq(and(iter, 0x1), 0x0))) // 183 211 -- 182 241 -- 177 224
+                // switch eq(iter, 0)
+                // case 1 { break }
+                if eq(iter, 0x0) { break }
                 proofIndexPtr := add(proofIndexPtr, 0x20)
-                switch and(iter, 0x1)
-                case 0x1 {
-                    // iter is ODD
-                    let sibling := mload(add(add(tree, 0x20), mul(add(iter, 1), 0x20)))
-                    mstore(proofIndexPtr, sibling)
-                    iter := div(iter, 2)
-                }
-                default {
-                    // iter is EVEN
-                    let sibling := mload(add(add(tree, 0x20), mul(sub(iter, 1), 0x20)))
-                    mstore(proofIndexPtr, sibling)
-                    iter := div(sub(iter, 1), 2)
-                }
             }
-            mstore(0x40, add(proofIndexPtr, 0x20))
-            return(ptr, add(0x20, sub(add(proofIndexPtr, 0x20), proofSizePtr)))
+            mstore(proofSizePtr, div(sub(proofIndexPtr, proofSizePtr), 0x20))
+            return(ptr, add(0x40, sub(proofIndexPtr, proofSizePtr)))
         }
     }
 }
