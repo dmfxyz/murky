@@ -63,8 +63,7 @@ contract CompleteMerkle {
                 // TODO: clean all this up, mainly broken out for early understanding and debugging
                 let left := mload(add(tree, mul(sub(i, 1), 0x20)))
                 let right := mload(add(tree, mul(i, 0x20)))
-                let indexToWrite := div(sub(i, 1), 2)
-                let posToWrite := add(tree, mul(indexToWrite, 0x20))
+                let posToWrite := add(tree, shr(1, mul(sub(i, 1), 0x20)))
                 mstore(posToWrite, hash_leafs(left, right))
             }
         }
