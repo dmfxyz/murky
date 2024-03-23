@@ -10,15 +10,4 @@ const indexToProve = input['index'];
 const tree = StandardMerkleTree.of(leafs, ["bytes32", "bytes32"], { sortLeaves: false }); // NO DEFAULT SORTING LEAVES
 const proof = tree.getProof(indexToProve);
 process.stdout.write(ethers.utils.defaultAbiCoder.encode(['bytes32[]'], [proof]));
-// // const root = tree.root;
-// // console.log(tree.entries());
-// for (const [i, v] of tree.entries()) {
-//     if (i == indexToProve) {
-//         const proof = tree.getProof(i);
-//         console.log('Value:', v);
-//         console.log('Proof:', proof);
-//     }
-// }
-// console.log(tree.root)
-// console.log(tree.render())
   

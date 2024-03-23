@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-/// @notice Nascent, simple, kinda efficient (and improving!) Merkle proof generator and verifier
+/// @notice simple, kinda efficient (and improving!) Merkle proof generator and verifier using complete binary trees
 /// @author dmfxyz
-/// @dev Note Generic Merkle Tree
+/// @dev Note Merkle Tree implemented as a Complete Binary Tree
 contract CompleteMerkle {
     /**
      *
@@ -42,10 +42,6 @@ contract CompleteMerkle {
 
     function buildTree(bytes32[] memory data) public pure returns (bytes32[] memory) {
         bytes32[] memory tree = initTree(data);
-        // for (uint256 i = tree.length - 1; i > 0; i -= 2) {
-        //     uint256 posToWrite = (i - 1) / 2;
-        //     tree[posToWrite] = hashLeafPairs(tree[i - 1], tree[i]);
-        // }
         assembly {
             function hash_leafs(left, right) -> _hash {
                 switch lt(left, right)
@@ -113,14 +109,9 @@ contract CompleteMerkle {
             let proofIndexPtr := add(ptr, 0x40)
             for {} 0x1 {} {
                 // while (true)
-                let sibling := mload(add(tree, mul(add(iter, shl(0x1, and(iter, 0x1))), 0x20))) // TODO: can iter mul also be accomplised by shifting? is iter always going to be either 0 or 0x1
-                    // something like shr(0x20, mul(iter()) ehh prob not
+                let sibling := mload(add(tree, mul(add(iter, shl(0x1, and(iter, 0x1))), 0x20)))
                 mstore(proofIndexPtr, sibling)
-                //iter := div(add(sub(iter,1), and(iter,0x1)), 2) // 82 108
-                //iter := div(sub(iter,eq(and(iter,0x1), 0x0)), 2) // 181 231 -- 187 201 -- 184 211
-                iter := shr(1, sub(iter, eq(and(iter, 0x1), 0x0))) // 183 211 -- 182 241 -- 177 224
-                // switch eq(iter, 0)
-                // case 1 { break }
+                iter := shr(1, sub(iter, eq(and(iter, 0x1), 0x0)))
                 if eq(iter, 0x0) { break }
                 proofIndexPtr := add(proofIndexPtr, 0x20)
             }
