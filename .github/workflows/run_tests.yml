@@ -24,7 +24,7 @@ jobs:
           version: nightly
       
       - name: Run Fuzzed Unit Tests
-        run: forge test --no-match-path src/test/StandardInput.t.sol
+        run: forge test --no-match-path src/test/StandardInput.t.sol --fuzz-runs 10000
       
       - name: Run Differential Tests
         run: |
