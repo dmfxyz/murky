@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import "./common/MurkyBase.sol";
+
 /// @notice simple, kinda efficient (and improving!) Merkle proof generator and verifier using complete binary trees
 /// @author dmfxyz
 /// @dev Note Merkle Tree implemented as a Complete Binary Tree
-contract CompleteMerkle {
+contract CompleteMerkle is MurkyBase {
     /**
      *
      * HASHING FUNCTION *
      *
      */
-    function hashLeafPairs(bytes32 left, bytes32 right) public pure returns (bytes32 _hash) {
+    function hashLeafPairs(bytes32 left, bytes32 right) public pure override returns (bytes32 _hash) {
         assembly {
             switch lt(left, right)
             case 0 {
@@ -25,7 +27,7 @@ contract CompleteMerkle {
         }
     }
 
-    function initTree(bytes32[] memory data) private pure returns (bytes32[] memory) {
+    function _initTree(bytes32[] memory data) internal pure returns (bytes32[] memory) {
         require(data.length > 1, "wont generate root for single leaf");
 
         bytes32[] memory tree = new bytes32[](2 * data.length - 1);
@@ -40,8 +42,8 @@ contract CompleteMerkle {
         return tree;
     }
 
-    function buildTree(bytes32[] memory data) public pure returns (bytes32[] memory) {
-        bytes32[] memory tree = initTree(data);
+    function buildTree(bytes32[] memory data) private pure returns (bytes32[] memory) {
+        bytes32[] memory tree = _initTree(data);
         assembly {
             function hash_leafs(left, right) -> _hash {
                 switch lt(left, right)
@@ -66,13 +68,18 @@ contract CompleteMerkle {
         return tree;
     }
 
-    function getRoot(bytes32[] memory data) public pure returns (bytes32) {
+    function getRoot(bytes32[] memory data) public pure override returns (bytes32) {
         require(data.length > 1, "wont generate root for single leaf");
         bytes32[] memory tree = buildTree(data);
         return tree[0];
     }
 
-    function verifyProof(bytes32 root, bytes32[] memory proof, bytes32 valueToProve) external pure returns (bool) {
+    function verifyProof(bytes32 root, bytes32[] memory proof, bytes32 valueToProve)
+        external
+        pure
+        override
+        returns (bool)
+    {
         assembly {
             function hash_leafs(left, right) -> _hash {
                 switch lt(left, right)
@@ -97,11 +104,11 @@ contract CompleteMerkle {
         }
     }
 
-    function getProof(bytes32[] memory data, uint256 index) public pure returns (bytes32[] memory) {
+    function getProof(bytes32[] memory data, uint256 index) public pure override returns (bytes32[] memory) {
         require(data.length > 1, "wont generate proof for single leaf");
         bytes32[] memory tree = buildTree(data);
 
-        assembly ("memory-safe") {
+        assembly {
             let iter := sub(sub(mload(tree), index), 0x1)
             let ptr := mload(0x40)
             mstore(ptr, 0x20)

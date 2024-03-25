@@ -16,5 +16,5 @@ const encodedData = ethers.utils.defaultAbiCoder.encode(["bytes32[129]"], [data]
 if (!fs.existsSync("../data/")) {
     fs.mkdirSync("../data/");
 }
-fs.writeFileSync("../data/input", encodedData);
+fs.writeFileSync("../data/merkle_input.txt", encodedData);
 

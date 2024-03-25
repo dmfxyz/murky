@@ -22,7 +22,7 @@ contract CompleteDifferentialTests is Test {
 
         // Generate the input json to be used by the JS implementation
         string memory obj1 = vm.serializeBytes32("input", "leafs", leafs);
-        vm.writeJson(obj1, "./differential_testing/test/diff_input.json");
+        vm.writeJson(obj1, "./differential_testing/data/complete_root_input.json");
 
         // Prepare the leafs. OZ JS Merkle double hashes and expects each leaf to be a len(2) array (e.g. address, amount)
         // For this test we use the fuzzed bytes32 and a constant bytes32 0x1
@@ -39,7 +39,7 @@ contract CompleteDifferentialTests is Test {
         runJsInputs[3] = '--silent';
         runJsInputs[4] = 'run';
         runJsInputs[5] = 'generate-complete-root'; // Generates length 129 by default
-        runJsInputs[6] = "../test/diff_input.json";
+        runJsInputs[6] = "../data/complete_root_input.json";
         bytes memory jsResult = vm.ffi(runJsInputs);
         bytes32 ozGeneratedRoot = abi.decode(jsResult, (bytes32));
 
@@ -56,7 +56,7 @@ contract CompleteDifferentialTests is Test {
         string memory obj1 = "input";
         vm.serializeBytes32(obj1, "leafs", leafs);
         string memory obj2 = vm.serializeUint(obj1, "index", index);
-        vm.writeJson(obj2, "./differential_testing/test/proof_input.json");
+        vm.writeJson(obj2, "./differential_testing/data/complete_proof_input.json");
 
         // Prepare the leafs. OZ JS Merkle double hashes and expects each leaf to be a len(2) array (e.g. address, amount)
         // For this test we use the fuzzed bytes32 and a constant bytes32 0x1
@@ -74,7 +74,7 @@ contract CompleteDifferentialTests is Test {
         runJsInputs[3] = '--silent';
         runJsInputs[4] = 'run';
         runJsInputs[5] = 'generate-complete-proof';
-        runJsInputs[6] = "../test/proof_input.json";
+        runJsInputs[6] = "../data/complete_proof_input.json";
         bytes memory jsResult = vm.ffi(runJsInputs);
         bytes32[] memory ozGeneratedProof = abi.decode(jsResult, (bytes32[]));
 
