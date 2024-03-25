@@ -9,12 +9,12 @@ import "openzeppelin-contracts/contracts/utils/Strings.sol";
 import "forge-std/console.sol";
 
 contract CompleteMerkleTest is Test {
-    Merkle m;
-    CompleteMerkle cm;
+    CompleteMerkle m;
+    Merkle GAS_COMP_MERKLE;
 
     function setUp() public {
-        m = new Merkle();
-        cm = new CompleteMerkle();
+        m = new CompleteMerkle();
+        GAS_COMP_MERKLE = new Merkle();
     }
 
     function testGenerateProof(bytes32[] memory data, uint256 node) public {
@@ -31,7 +31,7 @@ contract CompleteMerkleTest is Test {
         assertEq(rollingHash, root);
     }
 
-    function testVerifyProof(bytes32[] memory data, uint256 node) public {
+    function testVerifyProofSucceedsForGoodValue(bytes32[] memory data, uint256 node) public {
         vm.assume(data.length > 1);
         vm.assume(node < data.length);
         bytes32 root = m.getRoot(data);
@@ -40,13 +40,13 @@ contract CompleteMerkleTest is Test {
         assertTrue(m.verifyProof(root, proof, valueToProve));
     }
 
-    function testFailVerifyProof(bytes32[] memory data, bytes32 valueToProve, uint256 node) public {
+    function testVerifyProofFailsForBadValue(bytes32[] memory data, bytes32 valueToProve, uint256 node) public {
         vm.assume(data.length > 1);
         vm.assume(node < data.length);
         vm.assume(valueNotInArray(data, valueToProve));
         bytes32 root = m.getRoot(data);
         bytes32[] memory proof = m.getProof(data, node);
-        assertTrue(m.verifyProof(root, proof, valueToProve));
+        assertFalse(m.verifyProof(root, proof, valueToProve));
     }
 
     // function testVerifyProofOzForGasComparison(bytes32[] memory data, uint256 node) public {
@@ -61,14 +61,14 @@ contract CompleteMerkleTest is Test {
     function testWontGetRootSingleLeaf() public {
         bytes32[] memory data = new bytes32[](1);
         data[0] = bytes32(0x0);
-        vm.expectRevert("won't generate root for single leaf");
+        vm.expectRevert("wont generate root for single leaf");
         m.getRoot(data);
     }
 
     function testWontGetProofSingleLeaf() public {
         bytes32[] memory data = new bytes32[](1);
         data[0] = bytes32(0x0);
-        vm.expectRevert("won't generate proof for single leaf");
+        vm.expectRevert("wont generate proof for single leaf");
         m.getProof(data, 0x0);
     }
 
@@ -88,8 +88,8 @@ contract CompleteMerkleTest is Test {
         data[3] = 0xde1820ee7887b5ae922f14f423bb2e7a6595e423f1a0c0a82a2ddeed09a92a25;
         data[4] = 0xcac6fc160d04af9e1fd8f0c71cf8d333453b39589d3846524462ee7737bd728d;
         data[5] = 0x1688f29243f54ddded6dedcbbc8dae64ef939f0b967d0fa56a6e5938febb5f79;
-        //bytes32[] memory tree = cm._getTree(data);
-        bytes32 root = cm.getRoot(data);
+        //bytes32[] memory tree = m._getTree(data);
+        bytes32 root = m.getRoot(data);
         assertEq(root, root);
     }
 
@@ -102,8 +102,8 @@ contract CompleteMerkleTest is Test {
         data[3] = 0xde1820ee7887b5ae922f14f423bb2e7a6595e423f1a0c0a82a2ddeed09a92a25;
         data[4] = 0xcac6fc160d04af9e1fd8f0c71cf8d333453b39589d3846524462ee7737bd728d;
         data[5] = 0x1688f29243f54ddded6dedcbbc8dae64ef939f0b967d0fa56a6e5938febb5f79;
-        //bytes32[] memory tree = cm._getTree(data);
-        bytes32 root = m.getRoot(data);
+        //bytes32[] memory tree = m._getTree(data);
+        bytes32 root = GAS_COMP_MERKLE.getRoot(data);
         assertEq(root, root);
     }
 }
