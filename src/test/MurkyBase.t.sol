@@ -19,11 +19,11 @@ contract MurkyBaseTest is Test, MurkyBase {
         this.log2ceilBitMagic(x);
     }
 
-    function testLogCeil_KnownPowerOf2() public {
+    function testLogCeil_KnownPowerOf2() public view {
         assertEq(3, this.log2ceilBitMagic(8));
     }
 
-    function testLogCeil_Known() public {
+    function testLogCeil_Known() public view {
         assertEq(8, this.log2ceilBitMagic((129)));
     }
 }

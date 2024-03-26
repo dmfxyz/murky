@@ -2,11 +2,13 @@ pragma solidity ^0.8.4;
 
 import "../Xorkle.sol";
 import "../Merkle.sol";
+import "../CompleteMerkle.sol";
 import "forge-std/Test.sol";
 
 contract StandardizedInputTest is Test {
     Xorkle x;
     Merkle m;
+    CompleteMerkle cm;
     bytes32[100] data;
     uint256[8] leaves = [4, 8, 15, 16, 23, 42, 69, 88];
 
@@ -18,6 +20,7 @@ contract StandardizedInputTest is Test {
         data = abi.decode(result, (bytes32[100]));
         x = new Xorkle();
         m = new Merkle();
+        cm = new CompleteMerkle();
     }
 
     function testXorkleGenerateProofStandard() public view {
@@ -34,7 +37,7 @@ contract StandardizedInputTest is Test {
         }
     }
 
-    function testXorkleVerifyProofStandard() public {
+    function testXorkleVerifyProofStandard() public view {
         bytes32[] memory _data = _getData();
         bytes32 root = x.getRoot(_data);
         for (uint256 i = 0; i < leaves.length; ++i) {
@@ -43,12 +46,28 @@ contract StandardizedInputTest is Test {
         }
     }
 
-    function testMerkleVerifyProofStandard() public {
+    function testMerkleVerifyProofStandard() public view {
         bytes32[] memory _data = _getData();
         bytes32 root = m.getRoot(_data);
         for (uint256 i = 0; i < leaves.length; ++i) {
             bytes32[] memory proof = m.getProof(_data, leaves[i]);
             assertTrue(m.verifyProof(root, proof, _data[leaves[i]]));
+        }
+    }
+
+    function testCompleteMerkleGenerateProofStandard() public view {
+        bytes32[] memory _data = _getData();
+        for (uint256 i = 0; i < leaves.length; ++i) {
+            cm.getProof(_data, leaves[i]);
+        }
+    }
+
+    function testCompleteMerkleVerifyProofStandard() public view {
+        bytes32[] memory _data = _getData();
+        bytes32 root = cm.getRoot(_data);
+        for (uint256 i = 0; i < leaves.length; ++i) {
+            bytes32[] memory proof = cm.getProof(_data, leaves[i]);
+            assertTrue(cm.verifyProof(root, proof, _data[leaves[i]]));
         }
     }
 

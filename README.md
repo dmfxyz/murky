@@ -3,9 +3,16 @@
 ![Slither](https://github.com/dmfxyz/murky/actions/workflows/slither.yml/badge.svg?event=push)
 
 
-Murky contains contracts that can generate merkle roots and proofs. Murky also performs inclusion verification. Both XOR-based and a concatenation-based hashing are currently supported.
+### Overview
+Murky contains contracts that can generate merkle roots and proofs. Murky also performs inclusion verification. A couple of default implementations are available out-of-the-box:
 
-The root generation, proof generation, and verification functions are all fuzz tested (configured 5,000 runs by default) using arbitrary bytes32 arrays and uint leaves. There is also standardized testing and differential testing.
+1. [`Merkle.sol`](./src/Merkle.sol) is the original Murky implementation. It implements the tree as a [Full Binary Tree](https://xlinux.nist.gov/dads/HTML/fullBinaryTree.html).
+
+2. [`CompleteMerkle.sol`](./src/CompleteMerkle.sol) is a merkle tree implementation using [Complete Binary Trees](https://xlinux.nist.gov/dads/HTML/completeBinaryTree.html). Some external libraries, particulary front-end or off-chain ones, use this type of tree.
+
+By default, both trees use sorted concatentation based hashing; you can also "bring your own" hashing function by inherting from [`MurkyBase.sol`](./src/common/MurkyBase.sol).
+
+The root generation, proof generation, and verification functions are all fuzz tested (configured 10,000 runs by default) using arbitrary bytes32 arrays and uint leaves. See [testing](#testing).
 
 > Note: Code is not audited (yet). Please do your own due dilligence testing if you are planning to use this code!
 
@@ -34,11 +41,6 @@ bool verified = m.verifyProof(root, proof, data[2]); // true!
 assertTrue(verified);
 ```
 
-### Notes
-* `Xorkle.sol` is implemented as a XOR tree. This allows for greater gas efficiency: hashes are calculated on 32 bytes instead of 64; it is agnostic of sibling order so there is less lt/gt branching. Note that XOR trees are not appropriate for all use-cases*.
-
-* `Merkle.sol` is implemented using concatenation and thus is a generic merkle tree. It's less efficient, but is compatible with [OpenZeppelin's Prover](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/MerkleProof.sol) and other implementations. Use this one if you aren't sure. Compatiblity with OZ Prover is implemented as a fuzz test.
-
 ### Script
 `Merkle.s.sol` is implemented using `forge-std` for quick and simple interaction with the core contracts. The script reads from `script/target/input.json`, generates merkle proof using `Merkle.sol` and then outputs at `script/target/output.json`.
 
@@ -57,17 +59,12 @@ When measuring a change's performance impact, please ensure you are benchmarking
 forge snapshot --ffi --match-path src/test/StandardInput.t.sol
 ```
 
-Passing just standardized tests is not sufficient for implementation changes. All changes must pass all tests, preferably with 10,000+ fuzz runs.
-
-There is also early support for [differential  testing](./differential_testing/).
+Passing just standardized tests is not sufficient for implementation changes. All changes must pass all tests, preferably with 10,000 fuzz runs. Slither analysis must also pass.
 
 > * It's possible that an improvement is not adequetly revealed by the current standardized data. If that is the case, new standard data should be provided with an accompanying description/justification.
 
+There is also [differential testing](./differential_testing/).
+
 #### Latest Gas
 ![gas report](./reports/murky_gas_report.png)
-
-[Gas Snapshots](./.gas-snapshot) are run only on the standardized tests. See [Testing](#testing).
-
 ---
-#### TODO
-- [ ] \* Do a writeup on the use-cases for XORs.

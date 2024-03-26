@@ -2,26 +2,18 @@
 pragma solidity ^0.8.4;
 
 import "../Merkle.sol";
+import "../CompleteMerkle.sol";
 import "forge-std/Test.sol";
 import "openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol";
+import "openzeppelin-contracts/contracts/utils/Strings.sol";
+import "forge-std/console.sol";
 
-contract ContractTest is Test {
-    Merkle m;
+contract GasComparisonTests is Test {
+    CompleteMerkle m;
+    Merkle GAS_COMP_MERKLE;
 
     function setUp() public {
-        m = new Merkle();
-    }
-
-    function testHashes(bytes32 left, bytes32 right) public view {
-        bytes32 hAssem = m.hashLeafPairs(left, right);
-        bytes memory packed;
-        if (left <= right) {
-            packed = abi.encodePacked(left, right);
-        } else {
-            packed = abi.encodePacked(right, left);
-        }
-        bytes32 hNaive = keccak256(packed);
-        assertEq(hAssem, hNaive);
+        m = new CompleteMerkle();
     }
 
     function testGenerateProof(bytes32[] memory data, uint256 node) public view {
@@ -38,7 +30,7 @@ contract ContractTest is Test {
         assertEq(rollingHash, root);
     }
 
-    function testVerifyProof(bytes32[] memory data, uint256 node) public view {
+    function testVerifyProofSucceedsForGoodValue(bytes32[] memory data, uint256 node) public view {
         vm.assume(data.length > 1);
         vm.assume(node < data.length);
         bytes32 root = m.getRoot(data);
@@ -47,13 +39,13 @@ contract ContractTest is Test {
         assertTrue(m.verifyProof(root, proof, valueToProve));
     }
 
-    function testFailVerifyProof(bytes32[] memory data, bytes32 valueToProve, uint256 node) public view {
+    function testVerifyProofFailsForBadValue(bytes32[] memory data, bytes32 valueToProve, uint256 node) public view {
         vm.assume(data.length > 1);
         vm.assume(node < data.length);
         vm.assume(valueNotInArray(data, valueToProve));
         bytes32 root = m.getRoot(data);
         bytes32[] memory proof = m.getProof(data, node);
-        assertTrue(m.verifyProof(root, proof, valueToProve));
+        assertFalse(m.verifyProof(root, proof, valueToProve));
     }
 
     function testVerifyProofOzForGasComparison(bytes32[] memory data, uint256 node) public view {
@@ -68,14 +60,14 @@ contract ContractTest is Test {
     function testWontGetRootSingleLeaf() public {
         bytes32[] memory data = new bytes32[](1);
         data[0] = bytes32(0x0);
-        vm.expectRevert("won't generate root for single leaf");
+        vm.expectRevert("wont generate root for single leaf");
         m.getRoot(data);
     }
 
     function testWontGetProofSingleLeaf() public {
         bytes32[] memory data = new bytes32[](1);
         data[0] = bytes32(0x0);
-        vm.expectRevert("won't generate proof for single leaf");
+        vm.expectRevert("wont generate proof for single leaf");
         m.getProof(data, 0x0);
     }
 

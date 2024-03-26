@@ -22,7 +22,7 @@ contract MerkleScriptOutputTest is Test, ScriptHelper {
     uint256 value = 10000;
     uint256 index = 1;
 
-    function testAbiEncode(address a, uint256 b, uint256 c) public {
+    function testAbiEncode(address a, uint256 b, uint256 c) public pure {
         vm.assume(a != address(0));
         vm.assume(b != 0);
         vm.assume(c != 0);
@@ -39,24 +39,24 @@ contract MerkleScriptOutputTest is Test, ScriptHelper {
         assertEq(abi.encode(a, b, c), ltrim64(abi.encode(_bytes)));
     }
 
-    function testComputeLeaf() public {
+    function testComputeLeaf() public view {
         bytes32 computedLeaf = keccak256(bytes.concat(keccak256(abi.encode(addr, value, index))));
         assertEq(computedLeaf, leaf);
     }
 
-    function testVerify() public {
+    function testVerify() public view {
         bytes32 computedLeaf = keccak256(bytes.concat(keccak256(abi.encode(addr, value, index))));
         assertTrue(MerkleProof.verify(proof, root, computedLeaf));
     }
 
-    function testFalseAddress(address a) public {
+    function testFalseAddress(address a) public view {
         vm.assume(a != addr);
 
         bytes32 computedLeaf = keccak256(bytes.concat(keccak256(abi.encode(a, value, index))));
         assertFalse(MerkleProof.verify(proof, root, computedLeaf));
     }
 
-    function testFalseValue(uint256 b, uint256 c) public {
+    function testFalseValue(uint256 b, uint256 c) public view {
         vm.assume(b != value);
         vm.assume(c != index);
 
