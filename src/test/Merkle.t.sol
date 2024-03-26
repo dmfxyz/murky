@@ -12,7 +12,7 @@ contract ContractTest is Test {
         m = new Merkle();
     }
 
-    function testHashes(bytes32 left, bytes32 right) public {
+    function testHashes(bytes32 left, bytes32 right) public view {
         bytes32 hAssem = m.hashLeafPairs(left, right);
         bytes memory packed;
         if (left <= right) {
@@ -24,7 +24,7 @@ contract ContractTest is Test {
         assertEq(hAssem, hNaive);
     }
 
-    function testGenerateProof(bytes32[] memory data, uint256 node) public {
+    function testGenerateProof(bytes32[] memory data, uint256 node) public view {
         vm.assume(data.length > 1);
         vm.assume(node < data.length);
         bytes32 root = m.getRoot(data);
@@ -38,7 +38,7 @@ contract ContractTest is Test {
         assertEq(rollingHash, root);
     }
 
-    function testVerifyProof(bytes32[] memory data, uint256 node) public {
+    function testVerifyProof(bytes32[] memory data, uint256 node) public view {
         vm.assume(data.length > 1);
         vm.assume(node < data.length);
         bytes32 root = m.getRoot(data);
@@ -47,7 +47,7 @@ contract ContractTest is Test {
         assertTrue(m.verifyProof(root, proof, valueToProve));
     }
 
-    function testFailVerifyProof(bytes32[] memory data, bytes32 valueToProve, uint256 node) public {
+    function testFailVerifyProof(bytes32[] memory data, bytes32 valueToProve, uint256 node) public view {
         vm.assume(data.length > 1);
         vm.assume(node < data.length);
         vm.assume(valueNotInArray(data, valueToProve));
@@ -56,7 +56,7 @@ contract ContractTest is Test {
         assertTrue(m.verifyProof(root, proof, valueToProve));
     }
 
-    function testVerifyProofOzForGasComparison(bytes32[] memory data, uint256 node) public {
+    function testVerifyProofOzForGasComparison(bytes32[] memory data, uint256 node) public view {
         vm.assume(data.length > 1);
         vm.assume(node < data.length);
         bytes32 root = m.getRoot(data);

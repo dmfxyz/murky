@@ -57,15 +57,6 @@ contract GasComparisonTests is Test {
         assertTrue(MerkleProof.verify(proof, root, valueToProve));
     }
 
-    // function testVerifyProofOzForGasComparison(bytes32[] memory data, uint256 node) public view {
-    //     vm.assume(data.length > 1);
-    //     vm.assume(node < data.length);
-    //     bytes32 root = m.getRoot(data);
-    //     bytes32[] memory proof = m.getProof(data, node);
-    //     bytes32 valueToProve = data[node];
-    //     assertTrue(MerkleProof.verify(proof, root, valueToProve));
-    // }
-
     function testWontGetRootSingleLeaf() public {
         bytes32[] memory data = new bytes32[](1);
         data[0] = bytes32(0x0);
