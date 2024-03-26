@@ -4,9 +4,8 @@ pragma solidity ^0.8.4;
 import "../Xorkle.sol";
 import "forge-std/Test.sol";
 
-contract ContractTest is DSTest {
+contract ContractTest is Test {
     Xorkle m;
-    Vm vm = Vm(HEVM_ADDRESS);
 
     function setUp() public {
         m = new Xorkle();

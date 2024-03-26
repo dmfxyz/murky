@@ -37,7 +37,7 @@ contract StandardizedInputTest is Test {
         }
     }
 
-    function testXorkleVerifyProofStandard() public {
+    function testXorkleVerifyProofStandard() public view {
         bytes32[] memory _data = _getData();
         bytes32 root = x.getRoot(_data);
         for (uint256 i = 0; i < leaves.length; ++i) {
@@ -46,7 +46,7 @@ contract StandardizedInputTest is Test {
         }
     }
 
-    function testMerkleVerifyProofStandard() public {
+    function testMerkleVerifyProofStandard() public view {
         bytes32[] memory _data = _getData();
         bytes32 root = m.getRoot(_data);
         for (uint256 i = 0; i < leaves.length; ++i) {
@@ -62,7 +62,7 @@ contract StandardizedInputTest is Test {
         }
     }
 
-    function testCompleteMerkleVerifyProofStandard() public {
+    function testCompleteMerkleVerifyProofStandard() public view {
         bytes32[] memory _data = _getData();
         bytes32 root = cm.getRoot(_data);
         for (uint256 i = 0; i < leaves.length; ++i) {
