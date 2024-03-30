@@ -1,16 +1,12 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "../Merkle.sol";
 import "../CompleteMerkle.sol";
 import "forge-std/Test.sol";
 import "openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol";
-import "openzeppelin-contracts/contracts/utils/Strings.sol";
-import "forge-std/console.sol";
 
-contract GasComparisonTests is Test {
+contract CompleteMerkleTest is Test {
     CompleteMerkle m;
-    Merkle GAS_COMP_MERKLE;
 
     function setUp() public {
         m = new CompleteMerkle();
