@@ -16,7 +16,7 @@ contract ScriptHelper is Script {
     }
 
     /// @dev Returns a slice of `_bytes` starting at index `_start` and of length `_length`.
-    /// referenece: https://github.com/GNSPS/solidity-bytes-utils/blob/6458fb2780a3092bc756e737f246be1de6d3d362/contracts/BytesLib.sol#L228
+    /// reference: https://github.com/GNSPS/solidity-bytes-utils/blob/6458fb2780a3092bc756e737f246be1de6d3d362/contracts/BytesLib.sol#L228
     function slice(bytes memory _bytes, uint256 _start, uint256 _length) internal pure returns (bytes memory) {
         require(_length + 31 >= _length, "slice_overflow");
         require(_bytes.length >= _start + _length, "slice_outOfBounds");

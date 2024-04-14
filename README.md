@@ -8,13 +8,13 @@ Murky contains contracts that can generate merkle roots and proofs. Murky also p
 
 1. [`Merkle.sol`](./src/Merkle.sol) is the original Murky implementation. It implements the tree as a [Full Binary Tree](https://xlinux.nist.gov/dads/HTML/fullBinaryTree.html).
 
-2. [`CompleteMerkle.sol`](./src/CompleteMerkle.sol) is a merkle tree implementation using [Complete Binary Trees](https://xlinux.nist.gov/dads/HTML/completeBinaryTree.html). Some external libraries, particulary front-end or off-chain ones, use this type of tree.
+2. [`CompleteMerkle.sol`](./src/CompleteMerkle.sol) is a merkle tree implementation using [Complete Binary Trees](https://xlinux.nist.gov/dads/HTML/completeBinaryTree.html). Some external libraries, particularly front-end or off-chain ones, use this type of tree.
 
-By default, both trees use sorted concatentation based hashing; you can also "bring your own" hashing function by inherting from [`MurkyBase.sol`](./src/common/MurkyBase.sol).
+By default, both trees use sorted concatenation based hashing; you can also "bring your own" hashing function by inheriting from [`MurkyBase.sol`](./src/common/MurkyBase.sol).
 
 The root generation, proof generation, and verification functions are all fuzz tested (configured 10,000 runs by default) using arbitrary bytes32 arrays and uint leaves. See [testing](#testing).
 
-> Note: Code is not audited (yet). Please do your own due dilligence testing if you are planning to use this code!
+> Note: Code is not audited (yet). Please do your own due diligence testing if you are planning to use this code!
 
 You can currently see Murky in action in the [Seaport](https://github.com/ProjectOpenSea/Seaport) test suite.
 
