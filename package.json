@@ -1,0 +1,16 @@
+{
+    "name": "murky",
+    "version": "0.1.0",
+    "description": "Murky. A Merkle Proof Generator and Validator in Solidity",
+    "homepage": "https://github.com/dmfxyz/murky",
+    "bugs": "https://github.com/dmfxyz/murky",
+    "license": "MIT",
+    "author": "dmfxyz",
+    "files": [
+      "src/**/*"
+    ],
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/dmfxyz/murky.git"
+    }
+  }
