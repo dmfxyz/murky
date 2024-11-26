@@ -3,6 +3,7 @@ src = 'src'
 out = 'out'
 libs = ['lib']
 fuzz_runs=5000
+fuzz.max_test_rejects=500000
 fs_permissions = [{ access = "read-write", path = "./"}]
 
 # See more config options https://github.com/gakonst/foundry/tree/master/config
