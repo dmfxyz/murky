@@ -101,6 +101,6 @@ contract MerkleScript is Script, ScriptHelper {
         output = stringArrayToArrayString(outputs);
         vm.writeFile(string.concat(vm.projectRoot(), outputPath), output);
 
-        console.log("DONE: The output is found at %s", inputPath);
+        console.log("DONE: The output is found at %s", outputPath);
     }
 }
