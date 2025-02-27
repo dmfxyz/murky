@@ -47,13 +47,13 @@ contract ContractTest is Test {
         assertTrue(m.verifyProof(root, proof, valueToProve));
     }
 
-    function testFailVerifyProof(bytes32[] memory data, bytes32 valueToProve, uint256 node) public view {
+    function testFalseWhenNotMemberProof(bytes32[] memory data, bytes32 valueToProve, uint256 node) public view {
         vm.assume(data.length > 1);
         vm.assume(node < data.length);
         vm.assume(valueNotInArray(data, valueToProve));
         bytes32 root = m.getRoot(data);
         bytes32[] memory proof = m.getProof(data, node);
-        assertTrue(m.verifyProof(root, proof, valueToProve));
+        assertFalse(m.verifyProof(root, proof, valueToProve));
     }
 
     function testVerifyProofOzForGasComparison(bytes32[] memory data, uint256 node) public view {
