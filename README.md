@@ -19,7 +19,7 @@ The root generation, proof generation, and verification functions are all fuzz t
 You can currently see Murky in action in the [Seaport](https://github.com/ProjectOpenSea/Seaport) test suite.
 
 ### Building Locally
-You can run the repo using [Foundry](https://github.com/gakonst/foundry).
+You can run the repo using [Foundry](https://github.com/foundry-rs/foundry).
 1. clone the repo
 2. `forge install`
 3. `forge test`
