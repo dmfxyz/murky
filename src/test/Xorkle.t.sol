@@ -2,6 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "../Xorkle.sol";
+import "../common/MurkyBase.sol";
 import "forge-std/Test.sol";
 
 contract ContractTest is Test {
@@ -52,14 +53,14 @@ contract ContractTest is Test {
     function testWontGetRootSingleLeaf() public {
         bytes32[] memory data = new bytes32[](1);
         data[0] = bytes32(0x0);
-        vm.expectRevert("won't generate root for single leaf");
+        vm.expectRevert(MurkyBase.SingleLeaf.selector);
         m.getRoot(data);
     }
 
     function testWontGetProofSingleLeaf() public {
         bytes32[] memory data = new bytes32[](1);
         data[0] = bytes32(0x0);
-        vm.expectRevert("won't generate proof for single leaf");
+        vm.expectRevert(MurkyBase.SingleLeaf.selector);
         m.getProof(data, 0x0);
     }
 

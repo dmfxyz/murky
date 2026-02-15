@@ -2,6 +2,8 @@
 pragma solidity ^0.8.4;
 
 abstract contract MurkyBase {
+    /// @dev Thrown when trying to generate a root or proof for a single leaf array
+    error SingleLeaf();
     /**
      *
      * CONSTRUCTOR *
@@ -21,7 +23,7 @@ abstract contract MurkyBase {
      * PROOF VERIFICATION *
      *
      */
-    function verifyProof(bytes32 root, bytes32[] memory proof, bytes32 valueToProve)
+    function verifyProof(bytes32 root, bytes32[] calldata proof, bytes32 valueToProve)
         external
         pure
         virtual
@@ -44,7 +46,7 @@ abstract contract MurkyBase {
      *
      */
     function getRoot(bytes32[] memory data) public pure virtual returns (bytes32) {
-        require(data.length > 1, "won't generate root for single leaf");
+        if (data.length <= 1) revert SingleLeaf();
         while (data.length > 1) {
             data = hashLevel(data);
         }
@@ -52,7 +54,7 @@ abstract contract MurkyBase {
     }
 
     function getProof(bytes32[] memory data, uint256 node) public pure virtual returns (bytes32[] memory) {
-        require(data.length > 1, "won't generate proof for single leaf");
+        if (data.length <= 1) revert SingleLeaf();
         // The size of the proof is equal to the ceiling of log2(numLeaves)
         bytes32[] memory result = new bytes32[](log2ceilBitMagic(data.length));
         uint256 pos = 0;
