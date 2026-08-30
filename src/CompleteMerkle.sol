@@ -9,6 +9,14 @@ import "./common/MurkyBase.sol";
 contract CompleteMerkle is MurkyBase {
     /**
      *
+     * ERRORS *
+     *
+     */
+    error CompleteMerkle__InsufficientLeavesForRoot();
+    error CompleteMerkle__InsufficientLeavesForProof();
+
+    /**
+     *
      * HASHING FUNCTION *
      *
      */
@@ -32,13 +40,19 @@ contract CompleteMerkle is MurkyBase {
 
     ///@dev internal function that builds initial *sparse* array that is the shell of a complete tree
     function _initTree(bytes32[] memory data) internal pure returns (bytes32[] memory) {
-        require(data.length > 1, "wont generate root for single leaf");
+        if (data.length <= 1) {
+            revert CompleteMerkle__InsufficientLeavesForRoot();
+        }
 
         bytes32[] memory tree = new bytes32[](2 * data.length - 1);
         assembly {
             let dlen := mload(data)
             let titer := add(sub(mload(tree), dlen), 1)
-            for { let i := add(data, mul(dlen, 0x20)) } gt(i, data) { i := sub(i, 0x20) } {
+            for {
+                let i := add(data, mul(dlen, 0x20))
+            } gt(i, data) {
+                i := sub(i, 0x20)
+            } {
                 mstore(add(tree, mul(titer, 0x20)), mload(i))
                 titer := add(titer, 1)
             }
@@ -65,7 +79,11 @@ contract CompleteMerkle is MurkyBase {
                 }
                 _hash := keccak256(0x0, 0x40)
             }
-            for { let i := mload(tree) } gt(i, 1) { i := sub(i, 2) } {
+            for {
+                let i := mload(tree)
+            } gt(i, 1) {
+                i := sub(i, 2)
+            } {
                 // TODO: clean all this up, mainly broken out for early understanding and debugging
                 let left := mload(add(tree, mul(sub(i, 1), 0x20)))
                 let right := mload(add(tree, mul(i, 0x20)))
@@ -80,7 +98,9 @@ contract CompleteMerkle is MurkyBase {
     /// @param data The data to generate the root for. It should already be sorted if sorting is required.
     /// @return root as bytes32.
     function getRoot(bytes32[] memory data) public pure override returns (bytes32) {
-        require(data.length > 1, "wont generate root for single leaf");
+        if (data.length <= 1) {
+            revert CompleteMerkle__InsufficientLeavesForRoot();
+        }
         bytes32[] memory tree = buildTree(data);
         return tree[0];
     }
@@ -92,7 +112,9 @@ contract CompleteMerkle is MurkyBase {
     /// @param index The index of the value in the data that you wish to generate the inclusion proof for
     /// @return proof array that can subsequently be used by verifyProof or other libraries
     function getProof(bytes32[] memory data, uint256 index) public pure override returns (bytes32[] memory) {
-        require(data.length > 1, "wont generate proof for single leaf");
+        if (data.length <= 1) {
+            revert CompleteMerkle__InsufficientLeavesForProof();
+        }
         bytes32[] memory tree = buildTree(data);
 
         assembly {
@@ -106,7 +128,9 @@ contract CompleteMerkle is MurkyBase {
                 let sibling := mload(add(tree, mul(add(iter, shl(0x1, and(iter, 0x1))), 0x20)))
                 mstore(proofIndexPtr, sibling)
                 iter := shr(1, sub(iter, eq(and(iter, 0x1), 0x0)))
-                if eq(iter, 0x0) { break }
+                if eq(iter, 0x0) {
+                    break
+                }
                 proofIndexPtr := add(proofIndexPtr, 0x20)
             }
             mstore(proofSizePtr, div(sub(proofIndexPtr, proofSizePtr), 0x20))

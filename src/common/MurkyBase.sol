@@ -11,6 +11,14 @@ abstract contract MurkyBase {
 
     /**
      *
+     * ERRORS *
+     *
+     */
+    error MurkyBase__InsufficientLeavesForRoot();
+    error MurkyBase__InsufficientLeavesForProof();
+
+    /**
+     *
      * VIRTUAL HASHING FUNCTIONS *
      *
      */
@@ -21,7 +29,7 @@ abstract contract MurkyBase {
      * PROOF VERIFICATION *
      *
      */
-    function verifyProof(bytes32 root, bytes32[] memory proof, bytes32 valueToProve)
+    function verifyProof(bytes32 root, bytes32[] calldata proof, bytes32 valueToProve)
         external
         pure
         virtual
@@ -44,7 +52,7 @@ abstract contract MurkyBase {
      *
      */
     function getRoot(bytes32[] memory data) public pure virtual returns (bytes32) {
-        require(data.length > 1, "won't generate root for single leaf");
+        if (data.length <= 1) revert MurkyBase__InsufficientLeavesForRoot();
         while (data.length > 1) {
             data = hashLevel(data);
         }
@@ -52,7 +60,7 @@ abstract contract MurkyBase {
     }
 
     function getProof(bytes32[] memory data, uint256 node) public pure virtual returns (bytes32[] memory) {
-        require(data.length > 1, "won't generate proof for single leaf");
+        if (data.length <= 1) revert MurkyBase__InsufficientLeavesForProof();
         // The size of the proof is equal to the ceiling of log2(numLeaves)
         bytes32[] memory result = new bytes32[](log2ceilBitMagic(data.length));
         uint256 pos = 0;
